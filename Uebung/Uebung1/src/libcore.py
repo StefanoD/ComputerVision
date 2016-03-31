@@ -2,6 +2,7 @@ from skimage.data import imread
 import numpy as np
 
 class Img:
+
     @staticmethod
     def load_image(path, as_grey = False, to_float = True):
         # Load image
@@ -12,3 +13,10 @@ class Img:
             image = image.astype(np.float32)
 
         return image
+
+
+class Transform:
+
+    @staticmethod
+    def translate(matrix, trans_vector):
+        return matrix + trans_vector
