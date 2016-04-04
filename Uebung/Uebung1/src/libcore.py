@@ -17,13 +17,14 @@ class Img:
         return image
 
     @staticmethod
-    def get_2d_rotation_matrix(degrees):
+    def get_2d_rotation_matrix(rad):
         rotation_matrix = np.empty((2, 2))
 
-        rotation_matrix[0, 0] = math.cos(degrees)
-        rotation_matrix[0, 1] = math.sin(degrees)
-        rotation_matrix[1, 0] = -math.sin(degrees)
-        rotation_matrix[1, 1] = math.cos(degrees)
+        rotation_matrix[0, 0] = math.cos(rad)
+        rotation_matrix[0, 1] = -math.sin(rad)
+
+        rotation_matrix[1, 0] = math.sin(rad)
+        rotation_matrix[1, 1] = math.cos(rad)
 
         return rotation_matrix
 
