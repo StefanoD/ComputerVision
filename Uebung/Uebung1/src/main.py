@@ -11,9 +11,6 @@ import math
 def main():
     img = Img.load_image('../gletscher.jpg')
 
-    #test_indirekte_Umbildung(img)
-
-
     # 45 Grad
     rotation_matrix = Img.get_2d_rotation_matrix(math.pi/4.0)
 
