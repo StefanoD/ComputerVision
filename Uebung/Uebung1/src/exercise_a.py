@@ -32,8 +32,13 @@ def indirect_restructuring(image,
             # First reverse translation
             new_coordinates = new_coordinates - translation_vector
 
+            #print("1.", new_coordinates)
+
             # Reverse transformation
-            #new_coordinates = new_coordinates * translation_vector.T
+            # TODO: Kommt Quatsch raus
+            new_coordinates = np.dot(new_coordinates, transform_matrix.T)
+
+            #print("2." , new_coordinates)
 
             new_x = new_coordinates[0]
             new_y = new_coordinates[1]
