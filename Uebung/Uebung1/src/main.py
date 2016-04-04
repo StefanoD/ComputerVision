@@ -14,8 +14,11 @@ def main():
 
 
 
-    #rotation_matrix = Img.get_2d_rotation_matrix(30)
-    indirect_restructuring(image=img, translation_vector=np.array([50, 50]),transform_matrix=None)
+    rotation_matrix = Img.get_2d_rotation_matrix(30)
+
+    indirect_restructuring(image=img,
+                           transform_matrix=rotation_matrix,
+                           translation_vector=np.array([50, 50]))
 
 
 

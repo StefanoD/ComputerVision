@@ -17,25 +17,28 @@ def indirect_restructuring(image,
     #    new_dim = (image.shape[0] * 1.5, image.shape[1] * 1.5, len(image.shape))
     #else:
 
-    new_dim = (image.shape[0] * 1.5, image.shape[1] * 1.5, 3)
+    new_x_size = int(image.shape[0] * 1.5)
+    new_y_size = int(image.shape[1] * 1.5)
 
-    new_image = np.zeros(new_dim)
+    new_image = np.zeros((new_x_size, new_y_size, 3))
     new_image = new_image
 
-    x_size = new_image.shape[0]
-    y_size = new_image.shape[1]
+    print("old dim: ", image.shape, "new_dim", new_image.shape)
 
-    for x in range(x_size):
-        for y in range(y_size):
+    for x in range(new_x_size):
+        for y in range(new_y_size):
             new_coordinates = np.array([x, y])
+
+            # First reverse translation
             new_coordinates = new_coordinates - translation_vector
+
+            # Reverse transformation
+            #new_coordinates = new_coordinates * translation_vector.T
 
             new_x = new_coordinates[0]
             new_y = new_coordinates[1]
 
-            if new_x < 0 or new_y < 0 or x > image.shape[0] or y > image.shape[1]:
-                new_image[x, y] = 0
-            else:
+            if new_x > 0 and new_y > 0 and new_x < image.shape[0] and new_y < image.shape[1]:
                 new_image[x, y, 0] = image[new_x, new_y, 0]
                 new_image[x, y, 1] = image[new_x, new_y, 1]
                 new_image[x, y, 2] = image[new_x, new_y, 2]
