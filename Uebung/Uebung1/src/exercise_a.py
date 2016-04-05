@@ -38,6 +38,11 @@ def indirect_restructuring(image,
             new_x = new_coordinates[0]
             new_y = new_coordinates[1]
 
+            if restructuring_method == RestructuringMethod.BilinearInterpolation:
+                pass
+            else:
+                new_x, new_y = nearest_neighboor(new_x, new_y)
+
             if new_x > 0 and new_y > 0 and new_x < image.shape[0] and new_y < image.shape[1]:
                 new_image[x, y, 0] = image[new_x, new_y, 0]
                 new_image[x, y, 1] = image[new_x, new_y, 1]
@@ -50,3 +55,10 @@ def indirect_restructuring(image,
     # show picture
     plt.imshow(uint8_array)
     plt.show()
+
+def nearest_neighboor(x, y):
+    # round coordinates
+    new_x = int(x + 0.5)
+    new_y = int(y + 0.5)
+
+    return new_x, new_y

@@ -13,10 +13,12 @@ def main():
 
     # 45 Grad
     rotation_matrix = Img.get_2d_rotation_matrix(math.pi/4.0)
+    translation_matrix = np.array([50, 600])
 
-    indirect_restructuring(image=img,
-                           transform_matrix=rotation_matrix,
-                           translation_vector=np.array([50, 600]))
+    indirect_restructuring(img,
+                           rotation_matrix,
+                           translation_matrix,
+                           RestructuringMethod.NearestNeighbor)
 
 
 
