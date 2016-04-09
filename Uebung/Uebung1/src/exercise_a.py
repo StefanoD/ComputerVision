@@ -66,7 +66,7 @@ def bilinear_interpolation(image, x, y):
     y_upper = int(y)
     y_lower = int(y + 1)
 
-    # Because we added 1 on x and y, we could possible be over
+    # Because we added 1 on x and y, we could possibly be over
     # the range of the image
     image_x_max_index = image.shape[0] - 1
     image_y_max_index = image.shape[1] - 1
