@@ -17,8 +17,7 @@ def main():
 
     indirect_restructuring(img,
                            rotation_matrix,
-                           translation_matrix,
-                           RestructuringMethod.NearestNeighbor)
+                           translation_matrix)
 
 
 

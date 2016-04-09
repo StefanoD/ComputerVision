@@ -60,12 +60,19 @@ def indirect_restructuring(image,
     plt.show()
 
 def bilinear_interpolation(image, x, y):
-    # TODO Index Error Out of bounds. Ungetestet!
     x_left = int(x)
     x_right = int(x + 1)
 
     y_upper = int(y)
     y_lower = int(y + 1)
+
+    # Because we added 1 on x and y, we could possible be over
+    # the range of the image
+    image_x_max_index = image.shape[0] - 1
+    image_y_max_index = image.shape[1] - 1
+
+    if (x_right > image_x_max_index or y_lower > image_y_max_index):
+        return image[x, y]
 
     # calculate areas
     a1 = (x - x_left) * (y - y_upper)
