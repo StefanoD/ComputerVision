@@ -1,10 +1,22 @@
-import importlib
 import numpy as np
-from skimage.data import imread
+import math
 import matplotlib.pyplot as plt
 
 from libcore import Img
 from libcore import RestructuringMethod
+
+
+def main():
+    img = Img.load_image('../gletscher.jpg')
+
+    # 45 Grad
+    rotation_matrix = Img.get_2d_rotation_matrix(math.pi/4.0)
+    translation_matrix = np.array([50, 600])
+
+    indirect_restructuring(img,
+                           rotation_matrix,
+                           translation_matrix)
+
 
 def indirect_restructuring(image,
                            transform_matrix,
@@ -57,3 +69,5 @@ def indirect_restructuring(image,
     # show picture
     plt.imshow(uint8_array)
     plt.show()
+
+if __name__ == "__main__": main()
