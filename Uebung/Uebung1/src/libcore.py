@@ -81,14 +81,15 @@ class RestructuringMethod(Enum):
         new_image = np.zeros((new_x_size, new_y_size, 3))
         new_image = new_image
 
+        # Get the inverse matrix for indirect restructuring
+        trans_inv = inv(transform_matrix)
+
         for x in range(new_x_size):
             for y in range(new_y_size):
                 new_coordinates = np.array([x, y])
 
                 # First reverse translation
                 new_coordinates = new_coordinates - translation_vector
-
-                trans_inv = inv(transform_matrix)
 
                 # Reverse transformation
                 new_coordinates = np.dot(new_coordinates, trans_inv)
