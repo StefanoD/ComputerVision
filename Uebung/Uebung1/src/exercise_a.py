@@ -9,7 +9,7 @@ def main():
     img = Img.load_image('../gletscher.jpg')
 
     # 45 Grad
-    rotation_matrix = Img.get_2d_rotation_matrix(math.pi/4.0)
+    rotation_matrix = Img.get_2d_rotation_matrix(np.radians(45))
     translation_vector = np.array([50, 600])
 
     RestructuringMethod.indirect_restructuring(img,

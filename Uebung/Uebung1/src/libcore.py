@@ -62,10 +62,6 @@ class Transform:
     def translate(matrix, trans_vector):
         return matrix + trans_vector
 
-    @staticmethod
-    def degree_to_rad(degree):
-        return degree * math.pi / 180.0
-
 
 class RestructuringMethod(Enum):
     NearestNeighbor = 1
