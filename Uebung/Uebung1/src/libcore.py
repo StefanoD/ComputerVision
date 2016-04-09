@@ -2,6 +2,7 @@ from skimage.data import imread
 import numpy as np
 from enum import Enum
 import math
+import matplotlib.pyplot as plt
 
 class Img:
 
@@ -27,6 +28,15 @@ class Img:
         rotation_matrix[1, 1] = math.cos(rad)
 
         return rotation_matrix
+
+    @staticmethod
+    def get_2d_scale_matrix(scale):
+        scale_matrix = np.empty((2, 2))
+
+        scale_matrix[0, 0] = scale
+        scale_matrix[1, 1] = scale
+
+        return scale_matrix
 
     @staticmethod
     def get_x_3d_rotation_matrix(degrees):
@@ -60,6 +70,51 @@ class Transform:
 class RestructuringMethod(Enum):
     NearestNeighbor = 1
     BilinearInterpolation = 2
+
+
+    @staticmethod
+    def indirect_restructuring(image,
+                               transform_matrix,
+                               translation_vector,
+                               restructuring_method=BilinearInterpolation):
+        new_x_size = int(image.shape[0] * 1.5)
+        new_y_size = int(image.shape[1] * 1.5)
+
+        new_image = np.zeros((new_x_size, new_y_size, 3))
+        new_image = new_image
+
+        for x in range(new_x_size):
+            for y in range(new_y_size):
+                new_coordinates = np.array([x, y])
+
+                # First reverse translation
+                new_coordinates = new_coordinates - translation_vector
+
+                # Reverse transformation
+                new_coordinates = np.dot(new_coordinates, transform_matrix.T)
+
+                new_x = new_coordinates[0]
+                new_y = new_coordinates[1]
+
+                if restructuring_method == RestructuringMethod.NearestNeighbor:
+                    new_x, new_y = RestructuringMethod.nearest_neighboor(new_x, new_y)
+
+                if new_x > 0 and new_y > 0 and new_x < image.shape[0] and new_y < image.shape[1]:
+                    if restructuring_method == RestructuringMethod.BilinearInterpolation:
+                        new_image[x, y, 0] = RestructuringMethod.bilinear_interpolation(image[:, :, 0], new_x, new_y)
+                        new_image[x, y, 1] = RestructuringMethod.bilinear_interpolation(image[:, :, 1], new_x, new_y)
+                        new_image[x, y, 2] = RestructuringMethod.bilinear_interpolation(image[:, :, 2], new_x, new_y)
+                    else:
+                        new_image[x, y, 0] = image[new_x, new_y, 0]
+                        new_image[x, y, 1] = image[new_x, new_y, 1]
+                        new_image[x, y, 2] = image[new_x, new_y, 2]
+
+        # back casting to uint8
+        uint8_array = new_image.astype(np.uint8)
+
+        # show picture
+        plt.imshow(uint8_array)
+        plt.show()
 
     @staticmethod
     def bilinear_interpolation(image, x, y):
