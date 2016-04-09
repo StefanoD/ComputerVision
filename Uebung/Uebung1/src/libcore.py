@@ -69,10 +69,12 @@ class RestructuringMethod(Enum):
 
 
     @staticmethod
-    def indirect_restructuring(image,
-                               transform_matrix,
-                               translation_vector,
-                               restructuring_method=BilinearInterpolation):
+    def affine_transform(image,
+                         transform_matrix,
+                         translation_vector,
+                         restructuring_method=BilinearInterpolation):
+        from numpy.linalg import inv
+
         new_x_size = int(image.shape[0] * 1.5)
         new_y_size = int(image.shape[1] * 1.5)
 
@@ -86,8 +88,10 @@ class RestructuringMethod(Enum):
                 # First reverse translation
                 new_coordinates = new_coordinates - translation_vector
 
+                trans_inv = inv(transform_matrix)
+
                 # Reverse transformation
-                new_coordinates = np.dot(new_coordinates, transform_matrix.T)
+                new_coordinates = np.dot(new_coordinates, trans_inv)
 
                 new_x = new_coordinates[0]
                 new_y = new_coordinates[1]

@@ -12,9 +12,9 @@ def main():
     rotation_matrix = Img.get_2d_rotation_matrix(np.radians(45))
     translation_vector = np.array([50, 600])
 
-    RestructuringMethod.indirect_restructuring(img,
-                           rotation_matrix,
-                           translation_vector)
+    RestructuringMethod.affine_transform(img,
+                                         rotation_matrix,
+                                         translation_vector)
 
 
 
