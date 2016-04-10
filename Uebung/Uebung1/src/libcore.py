@@ -47,6 +47,15 @@ class Img:
 
         return x_scale_matrix
 
+    @staticmethod
+    def get_2d_x_y_scale_matrix(x_scale, y_scale):
+        x_scale_matrix = np.zeros((2, 2))
+
+        x_scale_matrix[0, 0] = x_scale
+        x_scale_matrix[1, 1] = y_scale
+
+        return x_scale_matrix
+
 
     @staticmethod
     def get_x_3d_rotation_matrix(degrees):
