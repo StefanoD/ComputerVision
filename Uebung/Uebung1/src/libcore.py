@@ -19,7 +19,7 @@ class Img:
 
     @staticmethod
     def get_2d_rotation_matrix(rad):
-        rotation_matrix = np.empty((2, 2))
+        rotation_matrix = np.zeros((2, 2))
 
         rotation_matrix[0, 0] = math.cos(rad)
         rotation_matrix[0, 1] = -math.sin(rad)
@@ -31,7 +31,7 @@ class Img:
 
     @staticmethod
     def get_2d_scale_matrix(scale):
-        scale_matrix = np.empty((2, 2))
+        scale_matrix = np.zeros((2, 2))
 
         scale_matrix[0, 0] = scale
         scale_matrix[1, 1] = scale
@@ -39,10 +39,20 @@ class Img:
         return scale_matrix
 
     @staticmethod
+    def get_2d_x_scale_matrix(scale):
+        x_scale_matrix = np.zeros((2, 2))
+
+        x_scale_matrix[0, 0] = scale
+        x_scale_matrix[1, 1] = 1
+
+        return x_scale_matrix
+
+
+    @staticmethod
     def get_x_3d_rotation_matrix(degrees):
         """Rotation through x axis"""
 
-        rotation_matrix = np.empty((3, 3))
+        rotation_matrix = np.zeros((3, 3))
 
         rotation_matrix[0, 0, 0] = 1
 
@@ -111,11 +121,8 @@ class RestructuringMethod(Enum):
                         new_image[x, y, 2] = image[new_x, new_y, 2]
 
         # back casting to uint8
-        uint8_array = new_image.astype(np.uint8)
+        return new_image.astype(np.uint8)
 
-        # show picture
-        plt.imshow(uint8_array)
-        plt.show()
 
     @staticmethod
     def bilinear_interpolation(image, x, y):
