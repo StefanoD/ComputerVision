@@ -89,7 +89,6 @@ class RestructuringMethod(Enum):
         new_y_size = int(image.shape[1] * 1.5)
 
         new_image = np.zeros((new_x_size, new_y_size, 3))
-        new_image = new_image
 
         # Get the inverse matrix for indirect restructuring
         trans_inv = inv(transform_matrix)

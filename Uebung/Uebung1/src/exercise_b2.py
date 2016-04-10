@@ -39,9 +39,9 @@ def b2():
 def b3():
     img = Img.load_image('../gletscher.jpg')
 
-    scale_matrix = Img.get_2d_scale_matrix(0.7).dot(Img.get_2d_x_scale_matrix(0.8))
+    scale_matrix = Img.get_2d_scale_matrix(0.7).dot(Img.get_2d_x_scale_matrix(0.5))
     print(scale_matrix)
-    transform_matrix = scale_matrix.dot(Img.get_2d_rotation_matrix(np.radians(30)))
+    transform_matrix = Img.get_2d_rotation_matrix(np.radians(30)).dot(scale_matrix)
 
     #scale_matrix = get_2d_x_scale_matrix()
     translation_vector = np.array([0, 0])
