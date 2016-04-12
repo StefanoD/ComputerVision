@@ -74,6 +74,28 @@ class Img:
         return rotation_matrix
 
 
+    @staticmethod
+    def get_scale_diagonal_matrix(scale_diag):
+        scale_diagonal_matrix = np.zeros((2, 2))
+
+        scale_diagonal_matrix[0, 0] = 1
+        scale_diagonal_matrix[0, 1] = scale_diag
+        scale_diagonal_matrix[1, 0] = 1
+        scale_diagonal_matrix[1, 1] = 1
+        return scale_diagonal_matrix
+
+
+    @staticmethod
+    def get_scale_orthogonal_matrix(scale_orthogonal):
+        scale_orthogonal_matrix = np.zeros((2, 2))
+
+        scale_orthogonal_matrix[0, 0] = 1
+        scale_orthogonal_matrix[0, 1] = 1
+        scale_orthogonal_matrix[1, 0] = scale_orthogonal
+        scale_orthogonal_matrix[1, 1] = 1
+        return scale_orthogonal_matrix
+
+
 
 class Transform:
 
@@ -85,7 +107,6 @@ class Transform:
 class RestructuringMethod(Enum):
     NearestNeighbor = 1
     BilinearInterpolation = 2
-
 
     @staticmethod
     def affine_transform(image,
@@ -106,8 +127,9 @@ class RestructuringMethod(Enum):
             for y in range(new_y_size):
                 new_coordinates = np.array([x, y])
 
+
                 # First reverse translation
-                new_coordinates = new_coordinates - translation_vector
+                new_coordinates = new_coordinates - translation_vector + np.array([0, -image.shape[1]/2])#-image.shape[0]/2
 
                 # Reverse transformation
                 new_coordinates = np.dot(new_coordinates, trans_inv)
