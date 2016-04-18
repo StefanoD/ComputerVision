@@ -75,18 +75,26 @@ def b1():
     c2 = a[7]
 
 
-    for y_old in np.arange(0, image.shape[0]):
-        for x_old in np.arange(0, image.shape[1]):
+    for x_old in np.arange(0, image.shape[0]):
+        for y_old in np.arange(0, image.shape[1]):
 
-            denominator = (b1*c2 - b2*c1)*x_old + (a2*c1 - a1*c2)*y_old + a1*b2 - a2*b1
-            new_x = ((b2 - c2*b3)*x_old + (a3*c2 - a2)*y_old + a2*b3 - a3*b2)/denominator
-            new_y = ((b3*c1 - b1)*x_old + (a1 - a3*c1)*y_old + a3*b1 - a1*b3)/denominator
+            #x_new = x_old + pass_point_1_x
+            #y_new = y_old + pass_point_1_y
+
+            x_new = x_old
+            y_new = y_old
+
+            denominator = (b1*c2 - b2*c1)*y_new + (a2*c1 - a1*c2)*x_new + a1*b2 - a2*b1
+            new_x = ((b2 - c2*b3)*y_new + (a3*c2 - a2)*x_new + a2*b3 - a3*b2)/denominator
+            new_y = ((b3*c1 - b1)*y_new + (a1 - a3*c1)*x_new + a3*b1 - a1*b3)/denominator
+
+
 
             if new_x > 0 and new_y > 0 and new_x < image.shape[0] and new_y < image.shape[1]:
 
-                new_image[x_old, y_old, 0] = image[new_x, new_y, 0]
-                new_image[x_old, y_old, 1] = image[new_x, new_y, 1]
-                new_image[x_old, y_old, 2] = image[new_x, new_y, 2]
+                new_image[y_new, x_new, 0] = image[new_x, new_y, 0]
+                new_image[y_new, x_new, 1] = image[new_x, new_y, 1]
+                new_image[y_new, x_new, 2] = image[new_x, new_y, 2]
 
     imsave("../images/test.jpg", new_image)
 
