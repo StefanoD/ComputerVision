@@ -23,10 +23,6 @@ def b1():
 
     new_image = np.zeros((new_x_size, new_y_size, 3))
 
-
-
-
-
     # links oben
     pass_point_1_x = 344.0
     pass_point_1_y = 334.0
@@ -50,19 +46,6 @@ def b1():
     pass_point_4_y = 330.0
     target_point_4_x = target_image_size_witdh
     target_point_4_y = 0.0
-
-
-
-
-
-    #matrix = np.array([[x1, y1, 1, 0, 0, 0, -0.0*x1, -0.0*y1],
-    #    [0,0,0, x1, y1, 1, -0.0*x1, -0.0*y1],
-    #    [x2, y2, 1, 0, 0, 0, -0.0*x2, -0.0*y2],
-    #    [0,0,0, x2, y2, 1, -height*x2, -height*y2],
-    #    [x3, y3, 1, 0, 0, 0, -width*x3, -width*y3],
-    #    [0,0,0, x3, y3, 1, -height*x3, -height*y3],
-    #    [x4, y4, 1, 0, 0, 0, -width*x4, -width*y4],
-    #    [0,0,0, x4, y4, 1, -0.0*x4, -0.0*y4]])
 
     equalisation_matrix1 = np.zeros((8,8))
 
