@@ -194,3 +194,41 @@ class RestructuringMethod(Enum):
         new_y = int(y + 0.5)
 
         return new_x, new_y
+
+
+class DistortionCorrection(object):
+
+    @staticmethod
+    def generate_distort_corretion_mat(points):
+
+        equalisation_matrix = np.zeros(8)
+        target_points = []
+
+        for point in points:
+            tmp_entry = [point.pass_point_x, point.pass_point_y, 1, 0, 0, 0, -point.target_point_x*point.pass_point_x,-point.target_point_x*point.pass_point_y]
+            equalisation_matrix = np.vstack((equalisation_matrix, tmp_entry))
+
+            tmp_entry = [0,0,0,point.pass_point_x,point.pass_point_y,1,-point.target_point_y*point.pass_point_x,-point.target_point_y*point.pass_point_y]
+            equalisation_matrix = np.vstack((equalisation_matrix, tmp_entry))
+            target_points.append(point.target_point_x)
+            target_points.append(point.target_point_y)
+
+        # delete first pseudo entry
+        equalisation_matrix = np.delete(equalisation_matrix, 0, 0)
+
+        target_points = np.transpose(target_points)
+
+        pseudo_inverse = np.linalg.pinv(equalisation_matrix)
+
+        a = (pseudo_inverse).dot(target_points)
+
+        return a
+
+
+class DistortionCorrectionPoint(object):
+
+    def __init__(self,pass_x, pass_y, target_x, target_y):
+        self.pass_point_x = pass_x
+        self.pass_point_y = pass_y
+        self.target_point_x = target_x
+        self.target_point_y = target_y

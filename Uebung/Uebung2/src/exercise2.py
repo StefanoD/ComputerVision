@@ -64,7 +64,7 @@ def b1():
 
     a = (np.linalg.inv(equalisation_matrix)).dot(target_points)
 
-    print (a)
+    print (a.shape)
 
     a1 = a[0]
     a2 = a[1]
