@@ -1,8 +1,6 @@
 from skimage.data import imread
 import numpy as np
-from enum import Enum
 import math
-import matplotlib.pyplot as plt
 
 class Img:
 
@@ -104,7 +102,7 @@ class Transform:
         return matrix + trans_vector
 
 
-class RestructuringMethod(Enum):
+class RestructuringMethod(object):
     NearestNeighbor = 1
     BilinearInterpolation = 2
 
