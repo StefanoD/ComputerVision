@@ -2,7 +2,7 @@ import numpy as np
 from scipy.misc import imsave
 
 from libcore import Img
-from libcore import RestructuringMethod, DistortionCorrection, DistortionCorrectionPoint
+from libcore import DistortionCorrection, DistortionCorrectionPoint
 
 image_path = '../schraegbild_tempelhof.jpg'
 
