@@ -16,9 +16,9 @@ def zwei_monitor():
     mon2 = Img.load_image('../images/Bild2.jpg')
 
     target_image_size_height_1 = 525.0
-    target_image_size_witdh_1 = 420.0
+    target_image_size_width_1 = 420.0
 
-    new_image_1 = np.zeros((target_image_size_height_1, target_image_size_witdh_1, 3))
+    new_image_1 = np.zeros((target_image_size_height_1, target_image_size_width_1, 3))
 
     target_image_size_height_2 = 525.0
     target_image_size_width_2 = 420.0
@@ -27,9 +27,9 @@ def zwei_monitor():
 
     points_1 = [DistortionCorrectionPoint(476.0, 578.0, 0.0, 0.0),  # links oben
                 DistortionCorrectionPoint(501.0, 964.0, 0.0, target_image_size_height_1),  # links unten
-                DistortionCorrectionPoint(742.0, 897.0, target_image_size_witdh_1, target_image_size_height_1),
+                DistortionCorrectionPoint(742.0, 897.0, target_image_size_width_1, target_image_size_height_1),
                 # rechts unten
-                DistortionCorrectionPoint(714.0, 555.0, target_image_size_witdh_1, 0.0)]
+                DistortionCorrectionPoint(714.0, 555.0, target_image_size_width_1, 0.0)]
 
     points_2 = [DistortionCorrectionPoint(127.0, 482.0, 0.0, 0.0),  # links oben
                 DistortionCorrectionPoint(124.0, 844.0, 0.0, target_image_size_height_2),  # links unten
