@@ -8,20 +8,22 @@ image_path = '../schraegbild_tempelhof.jpg'
 
 
 def main():
-    test_monitor()
-    pass
+    zwei_monitor()
+
 
 def zwei_monitor():
     mon1 = Img.load_image('../images/Bild1.jpg')
     mon2 = Img.load_image('../images/Bild2.jpg')
 
-
     target_image_size_height_1 = 525.0
     target_image_size_witdh_1 = 420.0
+
+    new_image_1 = np.zeros((target_image_size_height_1, target_image_size_witdh_1, 3))
 
     target_image_size_height_2 = 525.0
     target_image_size_witdh_2 = 420.0
 
+    new_image_2 = np.zeros((target_image_size_height_2, target_image_size_witdh_2, 3))
 
     points_1 = [DistortionCorrectionPoint(476.0, 578.0, 0.0, 0.0),  # links oben
               DistortionCorrectionPoint(501.0, 964.0, 0.0, target_image_size_height_1),  # links unten
@@ -34,6 +36,12 @@ def zwei_monitor():
           DistortionCorrectionPoint(399.0, 838.0, target_image_size_witdh_2, target_image_size_height_2),
           # rechts unten
           DistortionCorrectionPoint(414.0, 486.0, target_image_size_witdh_2, 0.0)]
+
+    new_image_1 = DistortionCorrection.distortion_correction(points_1, mon1, new_image_1)
+    new_image_2 = DistortionCorrection.distortion_correction(points_2, mon2, new_image_2)
+
+    imsave("../images/Bild_1_correct.jpg", new_image_1)
+    imsave("../images/Bild_2_correct.jpg", new_image_2)
 
 def test_monitor():
     #image = Img.load_image('../images/Bild_A.jpg')

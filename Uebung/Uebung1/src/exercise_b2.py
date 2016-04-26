@@ -6,8 +6,6 @@ from libcore import RestructuringMethod
 
 
 image_path = '../gletscher.jpg'
-image_path = '../test.jpg'
-
 
 def b1():
     img = Img.load_image(image_path)
