@@ -165,7 +165,7 @@ class RestructuringMethod(object):
         image_x_max_index = image.shape[0] - 1
         image_y_max_index = image.shape[1] - 1
 
-        if (x_right > image_x_max_index or y_lower > image_y_max_index):
+        if x_right > image_x_max_index or y_lower > image_y_max_index:
             return image[x, y]
 
         # calculate areas

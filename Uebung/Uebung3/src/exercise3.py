@@ -4,8 +4,6 @@ from scipy.misc import imsave
 from libcore import Img
 from libcore import DistortionCorrection, DistortionCorrectionPoint
 
-image_path = '../schraegbild_tempelhof.jpg'
-
 
 def main():
     zwei_monitor()
