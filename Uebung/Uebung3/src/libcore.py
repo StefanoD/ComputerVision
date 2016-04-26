@@ -197,7 +197,7 @@ class RestructuringMethod(object):
 class DistortionCorrection(object):
 
     @staticmethod
-    def generate_distort_corretion_mat(points):
+    def generate_distort_correction_mat(points):
 
         equalisation_matrix = np.zeros(8)
         target_points = []
@@ -218,14 +218,11 @@ class DistortionCorrection(object):
 
         pseudo_inverse = np.linalg.pinv(equalisation_matrix)
 
-        a = (pseudo_inverse).dot(target_points)
-
-        return a
-
+        return pseudo_inverse.dot(target_points)
 
     @staticmethod
-    def distortion_correction(points, image_orig, new_image):
-        a = DistortionCorrection.generate_distort_corretion_mat(points)
+    def distortion_correction(points, image_orig, new_image, use_bilinear_interpolation=True):
+        a = DistortionCorrection.generate_distort_correction_mat(points)
 
         a1 = a[0]
         a2 = a[1]
@@ -244,10 +241,10 @@ class DistortionCorrection(object):
                 new_y = ((b3 * c1 - b1) * x + (a1 - a3 * c1) * y + a3 * b1 - a1 * b3) / denominator
 
                 if new_x > 0 and new_y > 0 and new_x < image_orig.shape[1] and new_y < image_orig.shape[0]:
-                    # new_image[y, x, 0] = RestructuringMethod.bilinear_interpolation(image[:, :, 0], new_y, new_x)
-                    # new_image[y, x, 1] = RestructuringMethod.bilinear_interpolation(image[:, :, 1], new_y, new_x)
-                    # new_image[y, x, 2] = RestructuringMethod.bilinear_interpolation(image[:, :, 2], new_y, new_x)
-                    new_image[y, x, :] = image_orig[new_y, new_x, :]
+                    if use_bilinear_interpolation:
+                        new_image[y, x, :] = RestructuringMethod.bilinear_interpolation(image_orig[:, :, :], new_y, new_x)
+                    else:
+                        new_image[y, x, :] = image_orig[new_y, new_x, :]
 
         return new_image
 
