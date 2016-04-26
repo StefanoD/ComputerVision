@@ -16,6 +16,25 @@ class Img:
         return image
 
     @staticmethod
+    def sticht_images(img_left, img_right):
+        width_left_img = img_left.shape[1]
+
+        width = width_left_img + img_right.shape[1]
+        height = np.max([img_left.shape[0], img_right.shape[0]])
+
+        stichted_img = np.zeros((height, width, img_left.shape[2]))
+
+        for x in range(width_left_img):
+            for y in range(img_left.shape[0]):
+                stichted_img[y, x] = img_left[y, x]
+
+        for x in range(img_right.shape[1]):
+            for y in range(img_right.shape[0]):
+                stichted_img[y, x + width_left_img] = img_right[y, x]
+
+        return stichted_img
+
+    @staticmethod
     def get_2d_rotation_matrix(rad):
         rotation_matrix = np.zeros((2, 2))
 

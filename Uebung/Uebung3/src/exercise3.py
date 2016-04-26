@@ -38,8 +38,11 @@ def zwei_monitor():
     new_image_1 = DistortionCorrection.distortion_correction(points_1, mon1, new_image_1)
     new_image_2 = DistortionCorrection.distortion_correction(points_2, mon2, new_image_2)
 
+    stichted_img = Img.sticht_images(new_image_1, new_image_2)
+
     imsave("../images/Bild_1_correct.jpg", new_image_1)
     imsave("../images/Bild_2_correct.jpg", new_image_2)
+    imsave("../images/Bild_stichted.jpg", stichted_img)
 
 
 def test_monitor():
