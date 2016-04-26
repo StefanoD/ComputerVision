@@ -225,6 +225,35 @@ class DistortionCorrection(object):
         return a
 
 
+    @staticmethod
+    def distortion_correction(points, image_orig, new_image):
+        a = DistortionCorrection.generate_distort_corretion_mat(points)
+
+        a1 = a[0]
+        a2 = a[1]
+        a3 = a[2]
+        b1 = a[3]
+        b2 = a[4]
+        b3 = a[5]
+        c1 = a[6]
+        c2 = a[7]
+
+        for y in np.arange(0, new_image.shape[0]):
+            for x in np.arange(0, new_image.shape[1]):
+                denominator = ((b1 * c2 - b2 * c1) * x) + ((a2 * c1 - a1 * c2) * y) + (a1 * b2) - (a2 * b1)
+
+                new_x = ((b2 - c2 * b3) * x + (a3 * c2 - a2) * y + a2 * b3 - a3 * b2) / denominator
+                new_y = ((b3 * c1 - b1) * x + (a1 - a3 * c1) * y + a3 * b1 - a1 * b3) / denominator
+
+                if new_x > 0 and new_y > 0 and new_x < image_orig.shape[1] and new_y < image_orig.shape[0]:
+                    # new_image[y, x, 0] = RestructuringMethod.bilinear_interpolation(image[:, :, 0], new_y, new_x)
+                    # new_image[y, x, 1] = RestructuringMethod.bilinear_interpolation(image[:, :, 1], new_y, new_x)
+                    # new_image[y, x, 2] = RestructuringMethod.bilinear_interpolation(image[:, :, 2], new_y, new_x)
+                    new_image[y, x, :] = image_orig[new_y, new_x, :]
+
+        return new_image
+
+
 class DistortionCorrectionPoint(object):
 
     def __init__(self,pass_x, pass_y, target_x, target_y):
