@@ -16,6 +16,25 @@ class Img:
         return image
 
     @staticmethod
+    def sticht_images(img_left, img_right):
+        width_left_img = img_left.shape[1]
+
+        width = width_left_img + img_right.shape[1]
+        height = np.max([img_left.shape[0], img_right.shape[0]])
+
+        stichted_img = np.zeros((height, width, img_left.shape[2]))
+
+        for x in range(width_left_img):
+            for y in range(img_left.shape[0]):
+                stichted_img[y, x] = img_left[y, x]
+
+        for x in range(img_right.shape[1]):
+            for y in range(img_right.shape[0]):
+                stichted_img[y, x + width_left_img] = img_right[y, x]
+
+        return stichted_img
+
+    @staticmethod
     def get_2d_rotation_matrix(rad):
         rotation_matrix = np.zeros((2, 2))
 
@@ -140,13 +159,9 @@ class RestructuringMethod(object):
 
                 if new_x > 0 and new_y > 0 and new_x < image.shape[0] and new_y < image.shape[1]:
                     if restructuring_method == RestructuringMethod.BilinearInterpolation:
-                        new_image[x, y, 0] = RestructuringMethod.bilinear_interpolation(image[:, :, 0], new_x, new_y)
-                        new_image[x, y, 1] = RestructuringMethod.bilinear_interpolation(image[:, :, 1], new_x, new_y)
-                        new_image[x, y, 2] = RestructuringMethod.bilinear_interpolation(image[:, :, 2], new_x, new_y)
+                        new_image[x, y, :] = RestructuringMethod.bilinear_interpolation(image[:, :, :], new_x, new_y)
                     else:
-                        new_image[x, y, 0] = image[new_x, new_y, 0]
-                        new_image[x, y, 1] = image[new_x, new_y, 1]
-                        new_image[x, y, 2] = image[new_x, new_y, 2]
+                        new_image[x, y, :] = image[new_x, new_y, :]
 
         # back casting to uint8
         return new_image.astype(np.uint8)

@@ -48,10 +48,12 @@ def b1():
     target_point_4_x = target_image_size_witdh
     target_point_4_y = 0.0
 
-    points = [DistortionCorrectionPoint(344.0, 344.0, 0.0, 0.0),  # links oben
-                DistortionCorrectionPoint(300.0, 456.0, 0.0, target_image_size_height),  # links unten
-                DistortionCorrectionPoint(694.0, 432.0, target_image_size_witdh, target_image_size_height),
-                DistortionCorrectionPoint(548.0, 330.0, target_image_size_witdh, 0.0)] # rechts unten
+    translation_factor = 0
+
+    points = [DistortionCorrectionPoint(344.0, 344.0, 0.0+translation_factor, 0.0+translation_factor),  # links oben
+                DistortionCorrectionPoint(300.0, 456.0, 0.0+translation_factor, target_image_size_height+translation_factor),  # links unten
+                DistortionCorrectionPoint(694.0, 432.0, target_image_size_witdh+translation_factor, target_image_size_height+translation_factor),
+                DistortionCorrectionPoint(548.0, 330.0, target_image_size_witdh+translation_factor, 0.0+translation_factor)] # rechts unten
 
     new_image = DistortionCorrection.distortion_correction(points, image, new_image)
 

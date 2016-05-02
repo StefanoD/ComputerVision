@@ -15,22 +15,44 @@ class Img:
 
         return image
 
+
     @staticmethod
-    def sticht_images(img_left, img_right):
-        width_left_img = img_left.shape[1]
+    def sticht_images_copy(images):
 
-        width = width_left_img + img_right.shape[1]
-        height = np.max([img_left.shape[0], img_right.shape[0]])
+        x_size = 1920
+        y_size = 1080
 
-        stichted_img = np.zeros((height, width, img_left.shape[2]))
+        if len(images)<1:
+            raise ValueError ("Doof")
+
+        main_image = images[0]
+
+        for index in range(1, len(images)):
+            print ("Bild: %s")%index
+            for x in range(images[index].shape[1]):
+                for y in range(images[index].shape[0]):
+                    if images[index][y, x] != -1:
+                        main_image[y, x] = images[index][y, x]
+
+
+        return main_image
+
+    @staticmethod
+    def sticht_images(img, img_left_overlay, img_right_overlay):
+        width_left_img = img_left_overlay.shape[1]
+
+        width = width_left_img + img_right_overlay.shape[1]
+        height = np.max([img_left_overlay.shape[0], img_right_overlay.shape[0]])
+
+        stichted_img = np.zeros((height, width, img_left_overlay.shape[2]))
 
         for x in range(width_left_img):
-            for y in range(img_left.shape[0]):
-                stichted_img[y, x] = img_left[y, x]
+            for y in range(img_left_overlay.shape[0]):
+                stichted_img[y, x] = img_left_overlay[y, x]
 
-        for x in range(img_right.shape[1]):
-            for y in range(img_right.shape[0]):
-                stichted_img[y, x + width_left_img] = img_right[y, x]
+        for x in range(img_right_overlay.shape[1]):
+            for y in range(img_right_overlay.shape[0]):
+                stichted_img[y, x + width_left_img] = img_right_overlay[y, x]
 
         return stichted_img
 
@@ -159,13 +181,9 @@ class RestructuringMethod(object):
 
                 if new_x > 0 and new_y > 0 and new_x < image.shape[0] and new_y < image.shape[1]:
                     if restructuring_method == RestructuringMethod.BilinearInterpolation:
-                        new_image[x, y, 0] = RestructuringMethod.bilinear_interpolation(image[:, :, 0], new_x, new_y)
-                        new_image[x, y, 1] = RestructuringMethod.bilinear_interpolation(image[:, :, 1], new_x, new_y)
-                        new_image[x, y, 2] = RestructuringMethod.bilinear_interpolation(image[:, :, 2], new_x, new_y)
+                        new_image[x, y, :] = RestructuringMethod.bilinear_interpolation(image[:, :, :], new_x, new_y)
                     else:
-                        new_image[x, y, 0] = image[new_x, new_y, 0]
-                        new_image[x, y, 1] = image[new_x, new_y, 1]
-                        new_image[x, y, 2] = image[new_x, new_y, 2]
+                        new_image[x, y, :] = image[new_x, new_y, :]
 
         # back casting to uint8
         return new_image.astype(np.uint8)
@@ -240,8 +258,11 @@ class DistortionCorrection(object):
         return pseudo_inverse.dot(target_points)
 
     @staticmethod
-    def distortion_correction(points, image_orig, new_image, use_bilinear_interpolation=True):
+    def distortion_correction(points, image_orig, use_bilinear_interpolation=True):
         a = DistortionCorrection.generate_distort_correction_mat(points)
+
+        max_x, max_y = DistortionCorrectionPoint.get_max_distance(points)
+        new_image = np.ones((max_y, max_x, 3)) * -1
 
         a1 = a[0]
         a2 = a[1]
@@ -269,6 +290,22 @@ class DistortionCorrection(object):
 
 
 class DistortionCorrectionPoint(object):
+
+    @staticmethod
+    def get_max_distance(points):
+        tmp_x_max = -1
+        tmp_y_max = -1
+
+        for point in points:
+            if tmp_x_max < point.target_point_x:
+                tmp_x_max = point.target_point_x
+            if tmp_y_max < point.target_point_y:
+                tmp_y_max = point.target_point_y
+
+        return tmp_x_max, tmp_y_max
+
+
+
 
     def __init__(self,pass_x, pass_y, target_x, target_y):
         self.pass_point_x = pass_x
