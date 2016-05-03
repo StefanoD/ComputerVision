@@ -43,8 +43,8 @@ class Img:
             print ("Bild: %s")%index
             for x in range(images[index].shape[1]):
                 for y in range(images[index].shape[0]):
-                    if images[index][y, x] != -1:
-                        main_image[y, x] = images[index][y, x]
+                    if images[index][y][x][0] != -1:
+                        main_image[y][x][:] = images[index][y][x][:]
 
 
         return main_image

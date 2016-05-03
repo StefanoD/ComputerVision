@@ -12,26 +12,40 @@ from libcore import DistortionCorrection, DistortionCorrectionPoint
 
 def main():
     #zwei_monitor()
-    schachbrett2()
-    #test_ski_transform()
+    #schachbrett_stiching_kein_ueberlapp()
+    zwei_bilder_stiching()
 
 
-def test_ski_transform():
-    oben = Img.load_image('../images_schachbrett/stitching/oben.jpg')
+def zwei_bilder_stiching():
+    links = Img.load_image('../images_schachbrett/stitching/links.jpg')
+    alles = Img.load_image('../images_schachbrett/stitching/alles.jpg')
+
+    t = 0
+
+    points_links = [DistortionCorrectionPoint(593.0, 395.0, 0.0 + t, 0.0 + t),  # links oben
+                    DistortionCorrectionPoint(731.0, 388.0, 480 + t, 0 + t),  # links unten
+                    DistortionCorrectionPoint(587.0, 686.0, 0 + t, 1080 + t),  # rechts unten
+                    DistortionCorrectionPoint(728.0, 698.0, 480 + t, 1080 + t)]
+
+    t = 0
+
+    points_alles = [DistortionCorrectionPoint(431.0, 263.0, 0.0 + t, 0.0 ),  # links oben
+                    DistortionCorrectionPoint(418.0, 523.0, 0.0 + t, 1080 ),  # links unten
+                    DistortionCorrectionPoint(702.0, 515.0, 1680 + t, 1080 ),  # rechts unten
+
+                    DistortionCorrectionPoint(704.0, 310.0, 1680 + t, 0.0 )]
 
 
-    points_oben = [DistortionCorrectionPoint(229.0, 565.0, 0.0 , 0.0 ),  # links oben
-                   DistortionCorrectionPoint(214.0, 725.0, 0.0 , 540 ),  # links unten
-                   DistortionCorrectionPoint(670.0, 691.0, 1920 , 540 ),  # rechts unten
-                   DistortionCorrectionPoint(669.0, 564.0, 1920 , 0.0)]
-
-    #new_image_oben = DistortionCorrection.distortion_correction(points_oben, oben)
-    warped = DistortionCorrection.distortion_correction(points_oben, oben)
+    new_image_links = DistortionCorrection.distortion_correction(points_links, links)
+    new_images_alles = DistortionCorrection.distortion_correction(points_alles, alles)
 
 
-    imsave("../images_schachbrett/stitching/test_warped_correct.jpg", warped)
 
-def schachbrett2():
+
+    imsave("../images_schachbrett/stitching/links_correct.jpg", new_image_links)
+    imsave("../images_schachbrett/stitching/alles_zwei_correct.jpg", new_images_alles)
+
+def schachbrett_stiching_kein_ueberlapp():
     oben = Img.load_image('../images_schachbrett/stitching/oben.jpg')
     links = Img.load_image('../images_schachbrett/stitching/links.jpg')
     rechts = Img.load_image('../images_schachbrett/stitching/rechts.jpg')
@@ -70,16 +84,16 @@ def schachbrett2():
     new_images_rechts = DistortionCorrection.distortion_correction(points_rechts, rechts)
     new_images_alles = DistortionCorrection.distortion_correction(points_alles, alles)
 
-    #bilder = [new_images_alles,new_image_oben,new_image_links,new_images_rechts]
-    #stich = Img.sticht_images_copy(bilder)
+    bilder = [new_images_alles,new_image_oben,new_image_links,new_images_rechts]
+    stich = Img.sticht_images_copy(bilder)
 
-    #imsave("../images_schachbrett/stitching/stich_correct.jpg", stich)
+    imsave("../images_schachbrett/stitching/stich_correct.jpg", stich)
 
 
-    imsave("../images_schachbrett/stitching/oben_correct.jpg", new_image_oben)
-    imsave("../images_schachbrett/stitching/links_correct.jpg", new_image_links)
-    imsave("../images_schachbrett/stitching/rechts_correct.jpg", new_images_rechts)
-    imsave("../images_schachbrett/stitching/alles_correct.jpg", new_images_alles)
+    #imsave("../images_schachbrett/stitching/oben_correct.jpg", new_image_oben)
+    #imsave("../images_schachbrett/stitching/links_correct.jpg", new_image_links)
+    #imsave("../images_schachbrett/stitching/rechts_correct.jpg", new_images_rechts)
+    #imsave("../images_schachbrett/stitching/alles_correct.jpg", new_images_alles)
 
 def schachbrett():
     image = Img.load_image('../images_schachbrett/Schachbrett_Klein.jpg')
