@@ -1,11 +1,23 @@
 from skimage.data import imread
+from skimage import transform as tf
+
 import numpy as np
 import math
+
+
+DEBUG = True
 
 class Img:
 
     @staticmethod
     def load_image(path, as_grey = False, to_float = True):
+
+        if DEBUG:
+            im = imread(path,as_grey )
+            im = (im - np.amin(im) * 1.0) / (np.amax(im) - np.amin(im))
+            return im
+
+
         # Load image
         image = imread(path, as_grey)
 
@@ -259,8 +271,14 @@ class DistortionCorrection(object):
 
     @staticmethod
     def distortion_correction(points, image_orig, use_bilinear_interpolation=True):
-        a = DistortionCorrection.generate_distort_correction_mat(points)
 
+        if DEBUG:
+           return DistortionCorrection_speed.distortion_correction(points, image_orig)
+
+
+
+
+        a = DistortionCorrection.generate_distort_correction_mat(points)
         max_x, max_y = DistortionCorrectionPoint.get_max_distance(points)
         new_image = np.ones((max_y, max_x, 3)) * -1
 
@@ -289,6 +307,33 @@ class DistortionCorrection(object):
         return new_image
 
 
+class DistortionCorrection_speed(object):
+
+    @staticmethod
+    def distortion_correction(points, image_orig):
+        count_points = len(points)
+
+        src = np.zeros((count_points,2))
+        dst = np.zeros((count_points,2))
+
+        for i in range(count_points):
+            dst[i][0] = points[i].get_pass_point_x()
+            dst[i][1] = points[i].get_pass_point_y()
+
+            src[i][0] = points[i].get_target_point_x()
+            src[i][1] = points[i].get_target_point_y()
+
+
+        max_x, max_y = DistortionCorrectionPoint.get_max_distance(points)
+
+        tform3 = tf.ProjectiveTransform()
+        tform3.estimate(src, dst)
+        warped = tf.warp(image_orig, tform3, output_shape=(max_y ,max_x))
+
+
+        return warped
+
+
 class DistortionCorrectionPoint(object):
 
     @staticmethod
@@ -312,3 +357,16 @@ class DistortionCorrectionPoint(object):
         self.pass_point_y = pass_y
         self.target_point_x = target_x
         self.target_point_y = target_y
+
+    def get_target_point_x(self):
+        return self.target_point_x
+
+    def get_target_point_y(self):
+        return self.target_point_y
+
+
+    def get_pass_point_x(self):
+        return self.pass_point_x
+
+    def get_pass_point_y(self):
+        return self.pass_point_y

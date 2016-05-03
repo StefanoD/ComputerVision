@@ -1,6 +1,11 @@
 import numpy as np
 from scipy.misc import imsave
 
+from skimage import transform as tf
+from skimage.data import imread
+
+import matplotlib.pyplot as plt
+
 from libcore import Img
 from libcore import DistortionCorrection, DistortionCorrectionPoint
 
@@ -8,8 +13,23 @@ from libcore import DistortionCorrection, DistortionCorrectionPoint
 def main():
     #zwei_monitor()
     schachbrett2()
+    #test_ski_transform()
 
 
+def test_ski_transform():
+    oben = Img.load_image('../images_schachbrett/stitching/oben.jpg')
+
+
+    points_oben = [DistortionCorrectionPoint(229.0, 565.0, 0.0 , 0.0 ),  # links oben
+                   DistortionCorrectionPoint(214.0, 725.0, 0.0 , 540 ),  # links unten
+                   DistortionCorrectionPoint(670.0, 691.0, 1920 , 540 ),  # rechts unten
+                   DistortionCorrectionPoint(669.0, 564.0, 1920 , 0.0)]
+
+    #new_image_oben = DistortionCorrection.distortion_correction(points_oben, oben)
+    warped = DistortionCorrection.distortion_correction(points_oben, oben)
+
+
+    imsave("../images_schachbrett/stitching/test_warped_correct.jpg", warped)
 
 def schachbrett2():
     oben = Img.load_image('../images_schachbrett/stitching/oben.jpg')
@@ -50,16 +70,16 @@ def schachbrett2():
     new_images_rechts = DistortionCorrection.distortion_correction(points_rechts, rechts)
     new_images_alles = DistortionCorrection.distortion_correction(points_alles, alles)
 
-    bilder = [new_images_alles,new_image_oben,new_image_links,new_images_rechts]
-    stich = Img.sticht_images_copy(bilder)
+    #bilder = [new_images_alles,new_image_oben,new_image_links,new_images_rechts]
+    #stich = Img.sticht_images_copy(bilder)
 
-    imsave("../images_schachbrett/stitching/stich_correct.jpg", stich)
+    #imsave("../images_schachbrett/stitching/stich_correct.jpg", stich)
 
 
-    #imsave("../images_schachbrett/stitching/oben_correct.jpg", new_image_oben)
-    #imsave("../images_schachbrett/stitching/links_correct.jpg", new_image_links)
-    #imsave("../images_schachbrett/stitching/rechts_correct.jpg", new_images_rechts)
-    #imsave("../images_schachbrett/stitching/alles_correct.jpg", new_images_alles)
+    imsave("../images_schachbrett/stitching/oben_correct.jpg", new_image_oben)
+    imsave("../images_schachbrett/stitching/links_correct.jpg", new_image_links)
+    imsave("../images_schachbrett/stitching/rechts_correct.jpg", new_images_rechts)
+    imsave("../images_schachbrett/stitching/alles_correct.jpg", new_images_alles)
 
 def schachbrett():
     image = Img.load_image('../images_schachbrett/Schachbrett_Klein.jpg')
