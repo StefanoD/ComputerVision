@@ -1,11 +1,6 @@
 import numpy as np
 from scipy.misc import imsave
 
-from skimage import transform as tf
-from skimage.data import imread
-
-import matplotlib.pyplot as plt
-
 from libcore import Img
 from libcore import DistortionCorrection, DistortionCorrectionPoint, ImageAndPasspoints
 
@@ -23,11 +18,10 @@ def zwei_bilder_stiching():
 
     t = 0
 
-    # Verhaeltnis width:height: 11:4
     points_links = [DistortionCorrectionPoint(1215.0, 919.0, 0.0, 0.0),  # links oben
-                    DistortionCorrectionPoint(1001.0, 3037.0, 0.0, 1636),  # links unten
+                    DistortionCorrectionPoint(1001.0, 3066.0, 0.0, 2600),  # links unten
                     DistortionCorrectionPoint(4439.0, 461.0, 4500, 0) , #rechts oben
-                    DistortionCorrectionPoint(3375.0, 3263.0, 4500, 1636)]   #rechts unten
+                    DistortionCorrectionPoint(4392.0, 3321.0, 4500, 2600)]   #rechts unten
 
     t = 0
     """
