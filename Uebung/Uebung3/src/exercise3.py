@@ -23,11 +23,11 @@ def zwei_bilder_stiching():
 
     t = 0
 
-    # Verhaeltnis width:height: 9:2.5
+    # Verhaeltnis width:height: 11:4
     points_links = [DistortionCorrectionPoint(1215.0, 919.0, 0.0, 0.0),  # links oben
-                    DistortionCorrectionPoint(1093.0, 2225.0, 0.0, 400),  # links unten
-                    DistortionCorrectionPoint(3975.0, 531.0, 3600, 0) , #rechts oben
-                    DistortionCorrectionPoint(3925.0, 2200.0, 3600, 400)]   #rechts unten
+                    DistortionCorrectionPoint(1001.0, 3037.0, 0.0, 1636),  # links unten
+                    DistortionCorrectionPoint(4439.0, 461.0, 4500, 0) , #rechts oben
+                    DistortionCorrectionPoint(3375.0, 3263.0, 4500, 1636)]   #rechts unten
 
     t = 0
     """
