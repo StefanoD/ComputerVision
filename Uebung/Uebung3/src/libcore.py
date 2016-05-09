@@ -4,19 +4,19 @@ from skimage import transform as tf
 import numpy as np
 import math
 
+from scipy.misc import imsave
 
 DEBUG = True
 
-class Img:
 
+class Img:
     @staticmethod
-    def load_image(path, as_grey = False, to_float = True):
+    def load_image(path, as_grey=False, to_float=True):
 
         if DEBUG:
-            im = imread(path,as_grey )
+            im = imread(path, as_grey)
             im = (im - np.amin(im) * 1.0) / (np.amax(im) - np.amin(im))
             return im
-
 
         # Load image
         image = imread(path, as_grey)
@@ -27,6 +27,72 @@ class Img:
 
         return image
 
+    @staticmethod
+    def sticht_images_vignete(images_and_passpoints):
+
+        width1, height1 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[0].passpoints)
+        width2, height2 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[1].passpoints)
+
+        for images in images_and_passpoints:
+            print images.image.shape
+
+        weight_1 = Img.calculate_weight(images_and_passpoints[0].image)
+        weight_2 = Img.calculate_weight(images_and_passpoints[1].image)
+
+        imsave("../test/weight_1.jpg", weight_1)
+        imsave("../test/weight_2.jpg", weight_2)
+
+        weight_1_mask = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints, weight_1)
+        weight_2_mask = DistortionCorrection.distortion_correction(images_and_passpoints[1].passpoints, weight_2)
+
+        imsave("../test/weight_1_mask.jpg", weight_1_mask)
+        imsave("../test/weight_2_mask.jpg", weight_2_mask)
+
+        img_1 = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
+                                                           images_and_passpoints[0].image)
+        img_2 = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
+                                                           images_and_passpoints[1].image)
+
+        imsave("../test/img_1.jpg", img_1)
+        imsave("../test/img_2.jpg", img_2)
+
+        height1 = img_1.shape[0]
+        width1 = img_1.shape[1]
+        height2 = img_2.shape[0]
+        width2 = img_2.shape[1]
+
+        newHeight = max(height1, height2)
+        newWidth = max(DistortionCorrectionPoint.get_max_distance(images_and_passpoints[0].passpoints)[0],
+                       DistortionCorrectionPoint.get_max_distance(images_and_passpoints[1].passpoints)[0])
+
+        print newWidth
+        stitched_image = np.empty((newHeight, newWidth, images_and_passpoints[0].image.shape[2]))
+        new_weight = np.empty((newHeight, newWidth, 3))
+
+        for y in xrange(newHeight):
+            for x in xrange(newWidth):
+
+                if x >= width1 or y >= height1:
+
+                    pointWeight1 = 0
+
+                else:
+                    pointWeight1 = weight_1[y, x, 0]
+
+                if x >= width2 or y >= height2:
+                    pointWeight2 = 0
+                else:
+
+                    pointWeight2 = weight_2[y, x, 0]
+
+                if pointWeight1 > pointWeight2:
+                    stitched_image[y, x, :] = images_and_passpoints[0].image[y, x, :]
+                    new_weight[y, x] = pointWeight1
+                else:
+                    stitched_image[y, x, :] = images_and_passpoints[1].image[y, x, :]
+                    new_weight[y, x] = pointWeight2
+
+        imsave("../test/stitchedImage.jpg", stitched_image)
 
     @staticmethod
     def sticht_images_copy(images):
@@ -34,18 +100,17 @@ class Img:
         x_size = 1920
         y_size = 1080
 
-        if len(images)<1:
-            raise ValueError ("Doof")
+        if len(images) < 1:
+            raise ValueError("Doof")
 
         main_image = images[0]
 
         for index in range(1, len(images)):
-            print ("Bild: %s")%index
+            print ("Bild: %s") % index
             for x in range(images[index].shape[1]):
                 for y in range(images[index].shape[0]):
                     if images[index][y][x][0] != -1:
                         main_image[y][x][:] = images[index][y][x][:]
-
 
         return main_image
 
@@ -67,6 +132,30 @@ class Img:
                 stichted_img[y, x + width_left_img] = img_right_overlay[y, x]
 
         return stichted_img
+
+    @staticmethod
+    def calculate_weight(img):
+        dim_y, dim_x = (img.shape[0], img.shape[1])
+
+        x_left = np.linspace(0, 1, dim_x / 2)
+        x_right = x_left[::-1]
+        x = np.concatenate((x_left, x_right))
+
+        y_upper = np.transpose(np.linspace(0, 1, dim_y / 2))
+        y_lower = y_upper[::-1]
+        y = np.concatenate((y_upper, y_lower))
+
+        weight = np.outer(x, y)
+
+        weight = np.transpose(weight)
+
+        weight3d = np.empty((weight.shape[0], weight.shape[1], 3))
+
+        weight3d[:, :, 0] = weight
+        weight3d[:, :, 1] = weight
+        weight3d[:, :, 2] = weight
+
+        return weight3d
 
     @staticmethod
     def get_2d_rotation_matrix(rad):
@@ -107,7 +196,6 @@ class Img:
 
         return x_scale_matrix
 
-
     @staticmethod
     def get_x_3d_rotation_matrix(degrees):
         """Rotation through x axis"""
@@ -124,7 +212,6 @@ class Img:
 
         return rotation_matrix
 
-
     @staticmethod
     def get_scale_diagonal_matrix(scale_diag):
         scale_diagonal_matrix = np.zeros((2, 2))
@@ -134,7 +221,6 @@ class Img:
         scale_diagonal_matrix[1, 0] = 1
         scale_diagonal_matrix[1, 1] = 1
         return scale_diagonal_matrix
-
 
     @staticmethod
     def get_scale_orthogonal_matrix(scale_orthogonal):
@@ -147,9 +233,7 @@ class Img:
         return scale_orthogonal_matrix
 
 
-
 class Transform:
-
     @staticmethod
     def translate(matrix, trans_vector):
         return matrix + trans_vector
@@ -178,9 +262,9 @@ class RestructuringMethod(object):
             for y in range(new_y_size):
                 new_coordinates = np.array([x, y])
 
-
                 # First reverse translation
-                new_coordinates = new_coordinates - translation_vector + np.array([0, -image.shape[1]/2])#-image.shape[0]/2
+                new_coordinates = new_coordinates - translation_vector + np.array(
+                    [0, -image.shape[1] / 2])  # -image.shape[0]/2
 
                 # Reverse transformation
                 new_coordinates = np.dot(new_coordinates, trans_inv)
@@ -199,7 +283,6 @@ class RestructuringMethod(object):
 
         # back casting to uint8
         return new_image.astype(np.uint8)
-
 
     @staticmethod
     def bilinear_interpolation(image, x, y):
@@ -244,7 +327,6 @@ class RestructuringMethod(object):
 
 
 class DistortionCorrection(object):
-
     @staticmethod
     def generate_distort_correction_mat(points):
 
@@ -252,10 +334,12 @@ class DistortionCorrection(object):
         target_points = []
 
         for point in points:
-            tmp_entry = [point.pass_point_x, point.pass_point_y, 1, 0, 0, 0, -point.target_point_x*point.pass_point_x,-point.target_point_x*point.pass_point_y]
+            tmp_entry = [point.pass_point_x, point.pass_point_y, 1, 0, 0, 0, -point.target_point_x * point.pass_point_x,
+                         -point.target_point_x * point.pass_point_y]
             equalisation_matrix = np.vstack((equalisation_matrix, tmp_entry))
 
-            tmp_entry = [0,0,0,point.pass_point_x,point.pass_point_y,1,-point.target_point_y*point.pass_point_x,-point.target_point_y*point.pass_point_y]
+            tmp_entry = [0, 0, 0, point.pass_point_x, point.pass_point_y, 1, -point.target_point_y * point.pass_point_x,
+                         -point.target_point_y * point.pass_point_y]
             equalisation_matrix = np.vstack((equalisation_matrix, tmp_entry))
             target_points.append(point.target_point_x)
             target_points.append(point.target_point_y)
@@ -273,10 +357,7 @@ class DistortionCorrection(object):
     def distortion_correction(points, image_orig, use_bilinear_interpolation=True):
 
         if DEBUG:
-           return DistortionCorrection_speed.distortion_correction(points, image_orig)
-
-
-
+            return DistortionCorrection_speed.distortion_correction(points, image_orig)
 
         a = DistortionCorrection.generate_distort_correction_mat(points)
         max_x, max_y = DistortionCorrectionPoint.get_max_distance(points)
@@ -300,7 +381,8 @@ class DistortionCorrection(object):
 
                 if new_x > 0 and new_y > 0 and new_x < image_orig.shape[1] and new_y < image_orig.shape[0]:
                     if use_bilinear_interpolation:
-                        new_image[y, x, :] = RestructuringMethod.bilinear_interpolation(image_orig[:, :, :], new_y, new_x)
+                        new_image[y, x, :] = RestructuringMethod.bilinear_interpolation(image_orig[:, :, :], new_y,
+                                                                                        new_x)
                     else:
                         new_image[y, x, :] = image_orig[new_y, new_x, :]
 
@@ -308,13 +390,12 @@ class DistortionCorrection(object):
 
 
 class DistortionCorrection_speed(object):
-
     @staticmethod
     def distortion_correction(points, image_orig):
         count_points = len(points)
 
-        src = np.zeros((count_points,2))
-        dst = np.zeros((count_points,2))
+        src = np.zeros((count_points, 2))
+        dst = np.zeros((count_points, 2))
 
         for i in range(count_points):
             dst[i][0] = points[i].get_pass_point_x()
@@ -323,19 +404,22 @@ class DistortionCorrection_speed(object):
             src[i][0] = points[i].get_target_point_x()
             src[i][1] = points[i].get_target_point_y()
 
-
         max_x, max_y = DistortionCorrectionPoint.get_max_distance(points)
 
         tform3 = tf.ProjectiveTransform()
         tform3.estimate(src, dst)
-        warped = tf.warp(image_orig, tform3, output_shape=(max_y ,max_x))
-
+        warped = tf.warp(image_orig, tform3, output_shape=(max_y, max_x))
 
         return warped
 
 
-class DistortionCorrectionPoint(object):
+class ImageAndPasspoints(object):
+    def __init__(self, img, passpoints=[]):
+        self.image = img
+        self.passpoints = passpoints
 
+
+class DistortionCorrectionPoint(object):
     @staticmethod
     def get_max_distance(points):
         tmp_x_max = -1
@@ -349,10 +433,7 @@ class DistortionCorrectionPoint(object):
 
         return tmp_x_max, tmp_y_max
 
-
-
-
-    def __init__(self,pass_x, pass_y, target_x, target_y):
+    def __init__(self, pass_x, pass_y, target_x, target_y):
         self.pass_point_x = pass_x
         self.pass_point_y = pass_y
         self.target_point_x = target_x
@@ -363,7 +444,6 @@ class DistortionCorrectionPoint(object):
 
     def get_target_point_y(self):
         return self.target_point_y
-
 
     def get_pass_point_x(self):
         return self.pass_point_x
