@@ -12,9 +12,9 @@ from scipy.misc import imsave
 DEBUG = True
 
 class StitchMode:
-    MODE_STRONGEST = 0
-    MODE_SUM = 1
-    MODE_MULTIBAND_BLENDING = 2
+    MODE_STRONGEST = "MODE_STRONGEST"
+    MODE_SUM = "MODE_SUM"
+    MODE_MULTIBAND_BLENDING = "MODE_MULTIBAND_BLENDING"
 
 class Img:
     @staticmethod
@@ -40,62 +40,61 @@ class Img:
         #width1, height1 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[0].passpoints)
         #width2, height2 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[1].passpoints)
 
-        weight_1 = Img.calculate_weight(images_and_passpoints[0].image)
-        weight_2 = Img.calculate_weight(images_and_passpoints[1].image)
+
+
 
         #imsave("../test/weight_1.jpg", weight_1)
         #imsave("../test/weight_2.jpg", weight_2)
 
+        weight_1 = Img.calculate_weight(images_and_passpoints[0].image)
         weight_1_mask = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints, weight_1)
-        weight_2_mask = DistortionCorrection.distortion_correction(images_and_passpoints[1].passpoints, weight_2)
+
 
         #imsave("../test/weight_1_mask.jpg", weight_1_mask)
-        #imsave("../test/weight_2_mask.jpg", weight_2_mask)
 
         retificated_img_1 = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
                                                            images_and_passpoints[0].image)
-        retificated_img_2 = DistortionCorrection.distortion_correction(images_and_passpoints[1].passpoints,
-                                                           images_and_passpoints[1].image)
 
         #imsave("../test/weight_1_mask.jpg", weight_1_mask)
-        #imsave("../test/weight_1_mask.jpg", weight_2_mask)
 
-        stitched_image, new_weight = Img.stitch_two_pics(retificated_img_1,weight_1_mask,retificated_img_2,weight_2_mask,images_and_passpoints[1].passpoints,mode)
+        #stitched_image, new_weight = Img.stitch_two_pics(retificated_img_1,weight_1_mask,retificated_img_2,weight_2_mask,images_and_passpoints[1].passpoints,mode)
 
-        if len(images_and_passpoints)>2:
-            tmp_stitched_image = stitched_image
-            tmp_new_weight = new_weight
-            for i in range (2,len(images_and_passpoints)):
-                tmp_weight_mask = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints, Img.calculate_weight(images_and_passpoints[i].image))
-                tmp_retificated_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,images_and_passpoints[i].image)
+        if len(images_and_passpoints) > 1:
+            tmp_stitched_image = retificated_img_1
+            tmp_new_weight = weight_1_mask
 
-                tmp_stitched_image, tmp_new_weight = Img.stitch_two_pics(tmp_stitched_image, tmp_new_weight, tmp_retificated_img,
-                                                                         tmp_weight_mask,images_and_passpoints[i].passpoints,mode)
-            return tmp_stitched_image, tmp_new_weight
+            for i in range(1, len(images_and_passpoints)):
+                tmp_weight_mask = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
+                                                                             Img.calculate_weight(images_and_passpoints[i].image))
+                tmp_retificated_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
+                                                                                 images_and_passpoints[i].image)
+
+                tmp_stitched_image, tmp_new_weight = Img.stitch_two_pics(tmp_stitched_image, tmp_new_weight,
+                                                                         tmp_retificated_img, tmp_weight_mask,
+                                                                         images_and_passpoints[i].passpoints, mode)
+            return tmp_stitched_image
         else:
-            return stitched_image, new_weight
+            return retificated_img_1
 
 
     @staticmethod
-    def stitch_two_pics(retificated_img_1, weight_1_mask, retificated_img_2, weight_2_mask, passpoints_2, mode = StitchMode.MODE_STRONGEST):
+    def stitch_two_pics(retificated_img_1, weight_1_mask, retificated_img_2, weight_2_mask, passpoints_2, mode=StitchMode.MODE_STRONGEST):
 
         height1 = retificated_img_1.shape[0]
         width1 = retificated_img_1.shape[1]
         height2 = retificated_img_2.shape[0]
         width2 = retificated_img_2.shape[1]
 
-        newHeight = max(height1, height2)
-        newWidth = DistortionCorrectionPoint.get_max_distance(passpoints_2)[0]
+        new_height = max(height1, height2)
+        new_width = DistortionCorrectionPoint.get_max_distance(passpoints_2)[0]
 
-        print newWidth, " . ", newHeight
-        stitched_image = np.empty((newHeight, newWidth, 3))
-        new_weight = np.empty((newHeight, newWidth, 3))
+        print new_width, ", ", new_height
+        stitched_image = np.empty((new_height, new_width, 3))
+        new_weight = np.empty((new_height, new_width, 3))
 
         vec3_zero = np.array([0, 0, 0])
 
         if mode == StitchMode.MODE_MULTIBAND_BLENDING:
-            sigma1 = np.std(retificated_img_1)
-
             sig1_img1 = np.std(retificated_img_1[:, :, 0])
             sig2_img1 = np.std(retificated_img_1[:, :, 1])
             sig3_img1 = np.std(retificated_img_1[:, :, 2])
@@ -113,101 +112,56 @@ class Img:
             low_pass_retificated_img_2 = gaussian_filter(retificated_img_2, sigma_2_all)
             high_pass_retificated_img_2 = np.subtract(retificated_img_2, low_pass_retificated_img_2)
 
-            # imsave("../test/low_pass_retificated_img_2.jpg", low_pass_retificated_img_2)
-            # imsave("../test/high_pass_retificated_img_2.jpg", high_pass_retificated_img_2)
-
-        # scipy.ndimage.filters.gaussian_filter(retificated_img_1, )
-
-        for y in xrange(newHeight):
-            for x in xrange(newWidth):
+        for y in xrange(new_height):
+            for x in xrange(new_width):
 
                 if x >= width1 or y >= height1:
-                    pointWeight1 = 0
-                    pointColor1 = vec3_zero
+                    point_weight1 = 0
+                    point_color1 = vec3_zero
                 else:
-                    pointWeight1 = weight_1_mask[y, x, 0]
-                    pointColor1 = retificated_img_1[y, x, :]
+                    point_weight1 = weight_1_mask[y, x, 0]
+                    point_color1 = retificated_img_1[y, x, :]
+
                     if mode == StitchMode.MODE_MULTIBAND_BLENDING:
-                        pointLowPass1 = low_pass_retificated_img_1[y, x, :]
-                        pointHighPass1 = high_pass_retificated_img_1[y, x, :]
+                        point_low_pass1 = low_pass_retificated_img_1[y, x, :]
+                        point_high_pass1 = high_pass_retificated_img_1[y, x, :]
 
                 if x >= width2 or y >= height2:
-                    pointWeight2 = 0
-                    pointColor2 = vec3_zero
+                    point_weight2 = 0
+                    point_color2 = vec3_zero
                 else:
-                    pointWeight2 = weight_2_mask[y, x, 0]
-                    pointColor2 = retificated_img_2[y, x, :]
+                    point_weight2 = weight_2_mask[y, x, 0]
+                    point_color2 = retificated_img_2[y, x, :]
+
                     if mode == StitchMode.MODE_MULTIBAND_BLENDING:
-                        pointLowPass2 = low_pass_retificated_img_2[y, x, :]
-                        pointHighPass2 = high_pass_retificated_img_2[y, x, :]
+                        point_low_pass2 = low_pass_retificated_img_2[y, x, :]
+                        point_high_pass2 = high_pass_retificated_img_2[y, x, :]
 
                 if mode == StitchMode.MODE_STRONGEST:
-                    if pointWeight1 > pointWeight2:
+                    if point_weight1 > point_weight2:
                         stitched_image[y, x, :] = retificated_img_1[y, x, :]
-                        new_weight[y, x] = pointWeight1
+                        new_weight[y, x] = point_weight1
                     else:
                         stitched_image[y, x, :] = retificated_img_2[y, x, :]
-                        new_weight[y, x] = pointWeight2
+                        new_weight[y, x] = point_weight2
                 elif mode == StitchMode.MODE_SUM:
-                    if (pointWeight1 + pointWeight2) != 0:
-                        stitched_image[y, x:] = (pointWeight1 * pointColor1 + pointWeight2 * pointColor2) / (
-                        pointWeight1 + pointWeight2)
-                    new_weight[y, x] = (pointWeight1 + pointWeight2) / 2
+                    total_weight = point_weight1 + point_weight2
+                    if total_weight != 0:
+                        stitched_image[y, x:] = (point_weight1 * point_color1 + point_weight2 * point_color2) / total_weight
+                    new_weight[y, x] = total_weight / 2.0
                 elif mode == StitchMode.MODE_MULTIBAND_BLENDING:
+                    total_weight = point_weight1 + point_weight2
+                    value = (point_weight1 * point_low_pass1 + point_weight2 * point_low_pass2) / total_weight
 
-                    value = (pointWeight1 * pointLowPass1 + pointWeight2 * pointLowPass2) / (
-                    pointWeight1 + pointWeight2)
-                    if pointWeight1 > pointWeight2:
-                        value = value + pointHighPass1
+                    if point_weight1 > point_weight2:
+                        value = value + point_high_pass1
                     else:
-                        value = value + pointHighPass2
+                        value = value + point_high_pass2
 
-                    new_weight[y, x] = (pointWeight1 + pointWeight2)/2.0
-
+                    new_weight[y, x] = total_weight / 2.0
                     stitched_image[y, x, :] = value
 
-        # imsave("../test/stitchedImage_1.jpg", stitched_image)
         return stitched_image, new_weight
-
-
-    @staticmethod
-    def sticht_images_copy(images):
-
-        x_size = 1920
-        y_size = 1080
-
-        if len(images) < 1:
-            raise ValueError("Doof")
-
-        main_image = images[0]
-
-        for index in range(1, len(images)):
-            print ("Bild: %s") % index
-            for x in range(images[index].shape[1]):
-                for y in range(images[index].shape[0]):
-                    if images[index][y][x][0] != -1:
-                        main_image[y][x][:] = images[index][y][x][:]
-
-        return main_image
-
-    @staticmethod
-    def sticht_images(img, img_left_overlay, img_right_overlay):
-        width_left_img = img_left_overlay.shape[1]
-
-        width = width_left_img + img_right_overlay.shape[1]
-        height = np.max([img_left_overlay.shape[0], img_right_overlay.shape[0]])
-
-        stichted_img = np.zeros((height, width, img_left_overlay.shape[2]))
-
-        for x in range(width_left_img):
-            for y in range(img_left_overlay.shape[0]):
-                stichted_img[y, x] = img_left_overlay[y, x]
-
-        for x in range(img_right_overlay.shape[1]):
-            for y in range(img_right_overlay.shape[0]):
-                stichted_img[y, x + width_left_img] = img_right_overlay[y, x]
-
-        return stichted_img
 
     @staticmethod
     def calculate_weight(img):
