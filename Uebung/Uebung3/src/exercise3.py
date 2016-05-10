@@ -21,23 +21,34 @@ def zwei_bilder_stiching():
                     DistortionCorrectionPoint(4439.0, 461.0, 1125, 0) , #rechts oben
                     DistortionCorrectionPoint(4392.0, 3321.0, 1125, 650)]   #rechts unten
 
+    #old rechts oben (3665.0, 466.0, 888, 0.0)
+    #old rechts unten(3692.0, 3249.0, 1011, 650)
     points_mitte_links = [DistortionCorrectionPoint(549.0, 496.0, 0.0, 0.0),  # links oben
                     DistortionCorrectionPoint(366.0, 3230.0, 0.0, 650),  # links unten
-                    DistortionCorrectionPoint(3665.0, 466.0, 888, 0.0), #rechts oben
-                    DistortionCorrectionPoint(3692.0, 3249.0, 888, 650)]  #rechts unten
+                    DistortionCorrectionPoint(4175.0, 461.0, 1011, 0.0), #rechts oben #4175 (1011), 461
+                    DistortionCorrectionPoint(4261.0, 3249.0, 1011, 650)]  #rechts unten #4261, 3249
 
     DistortionCorrectionPoint.set_move_to_right_in_array(points_mitte_links, 992)
 
-    #new_image_links = DistortionCorrection.distortion_correction(points_links, links)
+    new_image_links = DistortionCorrection.distortion_correction(points_links, links)
     #new_images_mitte_links = DistortionCorrection.distortion_correction(points_mitte_links, mitte_links)
 
-    stichting_images = [ ImageAndPasspoints(links,points_links),
-                         ImageAndPasspoints(mitte_links, points_mitte_links)]
+    #stichting_images = [ ImageAndPasspoints(links,points_links),
+    #                     ImageAndPasspoints(mitte_links, points_mitte_links)]
 
-    Img.sticht_images_vignete(stichting_images)
+
+    #points_mitte_rechts = [DistortionCorrectionPoint(505.0, 395.0, 0.0, 0.0),  # links oben
+    #                DistortionCorrectionPoint(489.0, 3181.0, 0.0, 650),  # links unten
+    #                DistortionCorrectionPoint(4439.0, 461.0, 1125, 0),  # rechts oben
+    #                DistortionCorrectionPoint(4392.0, 3321.0, 1125, 650)]  # rechts unten
+
+
+
+
+    #Img.sticht_images_vignete(stichting_images)
 
     #imsave("../gGebaeude/links_correct.jpg", new_image_links)
-    #imsave("../gGebaeude/mitte_links_correct.jpg", new_images_mitte_links)
+    imsave("../gGebaeude/mitte_links_correct.jpg", new_images_mitte_links)
 
 
 def schachbrett_stiching_kein_ueberlapp():
