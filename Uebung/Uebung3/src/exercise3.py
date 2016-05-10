@@ -37,18 +37,17 @@ def zwei_bilder_stiching():
     #                     ImageAndPasspoints(mitte_links, points_mitte_links)]
 
 
-    #points_mitte_rechts = [DistortionCorrectionPoint(505.0, 395.0, 0.0, 0.0),  # links oben
-    #                DistortionCorrectionPoint(489.0, 3181.0, 0.0, 650),  # links unten
-    #                DistortionCorrectionPoint(4439.0, 461.0, 1125, 0),  # rechts oben
-    #                DistortionCorrectionPoint(4392.0, 3321.0, 1125, 650)]  # rechts unten
+    points_mitte_rechts = [DistortionCorrectionPoint(505.0, 395.0, 0.0, 0.0),  # links oben
+                    DistortionCorrectionPoint(489.0, 3181.0, 0.0, 650),  # links unten
+                    DistortionCorrectionPoint(4058.0, 493.0, 1440, 0),  # rechts oben
+                    DistortionCorrectionPoint(4250.0, 3027.0, 1440, 650)]  # rechts unten
 
-
-
+    new_mitte_rechts = DistortionCorrection.distortion_correction(points_links, links)
 
     #Img.sticht_images_vignete(stichting_images)
 
     #imsave("../gGebaeude/links_correct.jpg", new_image_links)
-    imsave("../gGebaeude/mitte_links_correct.jpg", new_images_mitte_links)
+    imsave("../gGebaeude/mitte_rechts_correct.jpg", new_mitte_rechts)
 
 
 def schachbrett_stiching_kein_ueberlapp():
