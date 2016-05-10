@@ -14,7 +14,7 @@ def main():
 
 def zwei_bilder_stiching():
     links = Img.load_image('../gGebaude/links.jpg')
-    alles = Img.load_image('../gGebaude/mitteLinks.jpg')
+    mitte_links = Img.load_image('../gGebaude/mitteLinks.jpg')
 
     t = 0
 
@@ -24,14 +24,14 @@ def zwei_bilder_stiching():
                     DistortionCorrectionPoint(4392.0, 3321.0, 4500, 2600)]   #rechts unten
 
     t = 0
-    """
-    mitte_links = [DistortionCorrectionPoint(352.0, 2398.0, 0.0, 0.0),  # links oben
-                    DistortionCorrectionPoint(342.0, 3204.0, 0.0, 600),  # links unten
-                    DistortionCorrectionPoint(4185.0, 2363.0, 2700, 0.0), #rechts oben
-                    DistortionCorrectionPoint(4608.0, 3190.0, 2700, 600)]  #rechts unten"""
+
+    points_mitte_links = [DistortionCorrectionPoint(549.0, 496.0, 0.0, 0.0),  # links oben
+                    DistortionCorrectionPoint(366.0, 3230.0, 0.0, 3550),  # links unten
+                    DistortionCorrectionPoint(3665.0, 466.0, 4500, 0.0), #rechts oben
+                    DistortionCorrectionPoint(3692.0, 3249.0, 4500, 3550)]  #rechts unten
 
     new_image_links = DistortionCorrection.distortion_correction(points_links, links)
-    #new_images_mitte_links = DistortionCorrection.distortion_correction(mitte_links, alles)
+    new_images_mitte_links = DistortionCorrection.distortion_correction(points_mitte_links, mitte_links)
 
     #stichting_images = [ ImageAndPasspoints(links,points_links),
     #                     ImageAndPasspoints(alles, points_alles)]
@@ -39,7 +39,7 @@ def zwei_bilder_stiching():
     #Img.sticht_images_vignete(stichting_images)
 
     imsave("../gGebaude/links_correct.jpg", new_image_links)
-    #imsave("../rheinufer/mitte_links_correct.jpg", new_images_mitte_links)
+    imsave("../gGebaude/mitte_links_correct.jpg", new_images_mitte_links)
 
 
 def schachbrett_stiching_kein_ueberlapp():
