@@ -1,5 +1,8 @@
 from skimage.data import imread
 from skimage import transform as tf
+from scipy.ndimage.filters import gaussian_filter
+
+from scipy import ndimage
 
 import numpy as np
 import math
@@ -8,6 +11,10 @@ from scipy.misc import imsave
 
 DEBUG = True
 
+class StitchMode:
+    MODE_STRONGEST = 0
+    MODE_SUM = 1
+    MODE_MULTIBAND_BLENDING = 2
 
 class Img:
     @staticmethod
@@ -28,7 +35,7 @@ class Img:
         return image
 
     @staticmethod
-    def sticht_images_vignete(images_and_passpoints):
+    def sticht_images_vignete(images_and_passpoints, mode=StitchMode.MODE_MULTIBAND_BLENDING):
 
         width1, height1 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[0].passpoints)
         width2, height2 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[1].passpoints)
@@ -39,8 +46,8 @@ class Img:
         weight_1 = Img.calculate_weight(images_and_passpoints[0].image)
         weight_2 = Img.calculate_weight(images_and_passpoints[1].image)
 
-        imsave("../test/weight_1.jpg", weight_1)
-        imsave("../test/weight_2.jpg", weight_2)
+        #imsave("../test/weight_1.jpg", weight_1)
+        #imsave("../test/weight_2.jpg", weight_2)
 
         weight_1_mask = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints, weight_1)
         weight_2_mask = DistortionCorrection.distortion_correction(images_and_passpoints[1].passpoints, weight_2)
@@ -48,51 +55,101 @@ class Img:
         imsave("../test/weight_1_mask.jpg", weight_1_mask)
         imsave("../test/weight_2_mask.jpg", weight_2_mask)
 
-        img_1 = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
+        retificated_img_1 = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
                                                            images_and_passpoints[0].image)
-        img_2 = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
+        retificated_img_2 = DistortionCorrection.distortion_correction(images_and_passpoints[1].passpoints,
                                                            images_and_passpoints[1].image)
 
-        imsave("../test/img_1.jpg", img_1)
-        imsave("../test/img_2.jpg", img_2)
+        imsave("../test/retificated_img_1.jpg", retificated_img_1)
+        imsave("../test/retificated_img_2.jpg", retificated_img_2)
 
-        height1 = img_1.shape[0]
-        width1 = img_1.shape[1]
-        height2 = img_2.shape[0]
-        width2 = img_2.shape[1]
+        height1 = retificated_img_1.shape[0]
+        width1 = retificated_img_1.shape[1]
+        height2 = retificated_img_2.shape[0]
+        width2 = retificated_img_2.shape[1]
 
         newHeight = max(height1, height2)
         newWidth = max(DistortionCorrectionPoint.get_max_distance(images_and_passpoints[0].passpoints)[0],
                        DistortionCorrectionPoint.get_max_distance(images_and_passpoints[1].passpoints)[0])
 
-        print newWidth
-        stitched_image = np.empty((newHeight, newWidth, images_and_passpoints[0].image.shape[2]))
+        print newWidth, " . ", newHeight
+        stitched_image = np.empty((newHeight, newWidth, 3))
         new_weight = np.empty((newHeight, newWidth, 3))
+
+        vec3_zero = np.array([0, 0, 0])
+
+        sigma1 = np.std(retificated_img_1)
+
+        sig1_img1 =  np.std(retificated_img_1[:, :, 0])
+        sig2_img1 =  np.std(retificated_img_1[:, :, 1])
+        sig3_img1 =  np.std(retificated_img_1[:, :, 2])
+
+        sig1_img2 =  np.std(retificated_img_2[:, :, 0])
+        sig2_img2 =  np.std(retificated_img_2[:, :, 1])
+        sig3_img2 =  np.std(retificated_img_2[:, :, 2])
+
+        sigma_1_all = [sig1_img1, sig2_img1, sig3_img1]
+        sigma_2_all = [sig1_img2, sig2_img2, sig3_img2]
+
+        low_pass_retificated_img_1 = gaussian_filter(retificated_img_1, sigma_1_all)
+        high_pass_retificated_img_1 = np.subtract(retificated_img_1, low_pass_retificated_img_1)
+
+        low_pass_retificated_img_2 = gaussian_filter(retificated_img_2, sigma_2_all)
+        high_pass_retificated_img_2 = np.subtract(retificated_img_2, low_pass_retificated_img_2)
+
+        imsave("../test/low_pass_retificated_img_2.jpg", low_pass_retificated_img_2)
+        imsave("../test/high_pass_retificated_img_2.jpg", high_pass_retificated_img_2)
+
+
+
+
+        #scipy.ndimage.filters.gaussian_filter(retificated_img_1, )
 
         for y in xrange(newHeight):
             for x in xrange(newWidth):
 
                 if x >= width1 or y >= height1:
-
                     pointWeight1 = 0
-
+                    pointColor1 = vec3_zero
                 else:
-                    pointWeight1 = weight_1[y, x, 0]
+                    pointWeight1 = weight_1_mask[y, x, 0]
+                    pointColor1 = retificated_img_1[y, x, :]
+                    pointLowPass1 =low_pass_retificated_img_1[y, x, :]
+                    pointHighPass1 = high_pass_retificated_img_1[y, x, :]
+
 
                 if x >= width2 or y >= height2:
                     pointWeight2 = 0
+                    pointColor2 = vec3_zero
                 else:
+                    pointWeight2 = weight_2_mask[y, x, 0]
+                    pointColor2 = retificated_img_2[y, x, :]
+                    pointLowPass2 =  low_pass_retificated_img_2[y, x, :]
+                    pointHighPass2 = high_pass_retificated_img_2[y, x, :]
 
-                    pointWeight2 = weight_2[y, x, 0]
 
-                if pointWeight1 > pointWeight2:
-                    stitched_image[y, x, :] = images_and_passpoints[0].image[y, x, :]
-                    new_weight[y, x] = pointWeight1
-                else:
-                    stitched_image[y, x, :] = images_and_passpoints[1].image[y, x, :]
-                    new_weight[y, x] = pointWeight2
+                if mode == StitchMode.MODE_STRONGEST:
+                    if pointWeight1 > pointWeight2:
+                        stitched_image[y, x, :] = retificated_img_1[y, x, :]
+                        new_weight[y, x] = pointWeight1
+                    else:
+                        stitched_image[y, x, :] = retificated_img_2[y, x, :]
+                        new_weight[y, x] = pointWeight2
+                elif mode == StitchMode.MODE_SUM:
+                    if (pointWeight1 + pointWeight2) != 0:
+                        stitched_image[y, x:] = (pointWeight1 * pointColor1 + pointWeight2 * pointColor2) / (pointWeight1 + pointWeight2)
+                    new_weight[y, x] = (pointWeight1 + pointWeight2)/2
+                elif mode == StitchMode.MODE_MULTIBAND_BLENDING:
 
-        imsave("../test/stitchedImage.jpg", stitched_image)
+                    value = (pointWeight1 * pointLowPass1 + pointWeight2 * pointLowPass2) / (pointWeight1 + pointWeight2)
+                    if pointWeight1 > pointWeight2:
+                        value = value + pointHighPass1
+                    else:
+                        value = value + pointHighPass2
+
+                    stitched_image[y,x,:] = value
+
+        imsave("../test/stitchedImage_1.jpg", stitched_image)
 
     @staticmethod
     def sticht_images_copy(images):
@@ -389,6 +446,8 @@ class DistortionCorrection(object):
         return new_image
 
 
+import matplotlib.pyplot as plt
+
 class DistortionCorrection_speed(object):
     @staticmethod
     def distortion_correction(points, image_orig):
@@ -406,9 +465,25 @@ class DistortionCorrection_speed(object):
 
         max_x, max_y = DistortionCorrectionPoint.get_max_distance(points)
 
+
         tform3 = tf.ProjectiveTransform()
         tform3.estimate(src, dst)
         warped = tf.warp(image_orig, tform3, output_shape=(max_y, max_x))
+
+        if False:
+            margins = dict(hspace=0.01, wspace=0.01, top=1, bottom=0, left=0, right=1)
+            text = image_orig
+
+            fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(8, 3))
+            fig.subplots_adjust(**margins)
+            plt.gray()
+            ax1.imshow(text)
+            ax1.plot(dst[:, 0], dst[:, 1], '.r')
+            ax1.axis('off')
+            ax2.imshow(warped)
+            ax2.axis('off')
+
+            plt.show()
 
         return warped
 
@@ -426,12 +501,20 @@ class DistortionCorrectionPoint(object):
         tmp_y_max = -1
 
         for point in points:
-            if tmp_x_max < point.target_point_x:
-                tmp_x_max = point.target_point_x
-            if tmp_y_max < point.target_point_y:
-                tmp_y_max = point.target_point_y
+            if tmp_x_max < point.get_target_point_x():
+                tmp_x_max = point.get_target_point_x()
+            if tmp_y_max < point.get_target_point_y():
+                tmp_y_max = point.get_target_point_y()
 
         return tmp_x_max, tmp_y_max
+
+
+    @staticmethod
+    def set_move_to_right_in_array(points, right_pixel):
+        for point in points:
+            point.set_move_to_right(right_pixel)
+
+
 
     def __init__(self, pass_x, pass_y, target_x, target_y):
         self.pass_point_x = pass_x
@@ -439,8 +522,13 @@ class DistortionCorrectionPoint(object):
         self.target_point_x = target_x
         self.target_point_y = target_y
 
+        self._move_to_right = 0
+
+    def set_move_to_right(self, right_pixel):
+        self._move_to_right = right_pixel
+
     def get_target_point_x(self):
-        return self.target_point_x
+        return self.target_point_x+self._move_to_right
 
     def get_target_point_y(self):
         return self.target_point_y
