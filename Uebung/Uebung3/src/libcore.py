@@ -57,10 +57,10 @@ class Img:
         retificated_img_2 = DistortionCorrection.distortion_correction(images_and_passpoints[1].passpoints,
                                                            images_and_passpoints[1].image)
 
-        #imsave("../test/retificated_img_1.jpg", retificated_img_1)
-        #imsave("../test/retificated_img_2.jpg", retificated_img_2)
+        imsave("../test/weight_1_mask.jpg", weight_1_mask)
+        imsave("../test/weight_1_mask.jpg", weight_2_mask)
 
-        stitched_image, new_weight = Img.stitch_two_pics(retificated_img_1,weight_1_mask,retificated_img_2,weight_2_mask,images_and_passpoints[1].passpoints)
+        stitched_image, new_weight = Img.stitch_two_pics(retificated_img_1,weight_1_mask,retificated_img_2,weight_2_mask,images_and_passpoints[1].passpoints,mode)
 
         if len(images_and_passpoints)>2:
             tmp_stitched_image = stitched_image
@@ -70,7 +70,7 @@ class Img:
                 tmp_retificated_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,images_and_passpoints[i].image)
 
                 tmp_stitched_image, tmp_new_weight = Img.stitch_two_pics(tmp_stitched_image, tmp_new_weight, tmp_retificated_img,
-                                                                         tmp_weight_mask,images_and_passpoints[i].passpoints)
+                                                                         tmp_weight_mask,images_and_passpoints[i].passpoints,mode)
             return tmp_stitched_image, tmp_new_weight
         else:
             return stitched_image, new_weight
@@ -161,6 +161,8 @@ class Img:
                         value = value + pointHighPass1
                     else:
                         value = value + pointHighPass2
+
+                    new_weight[y, x] = (pointWeight1 + pointWeight2)/2.0
 
                     stitched_image[y, x, :] = value
 

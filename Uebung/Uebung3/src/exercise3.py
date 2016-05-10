@@ -52,12 +52,15 @@ def zwei_bilder_stiching():
                            DistortionCorrectionPoint(3417.0, 3019.0, 1169, 650)]  # rechts unten
 
 
+    DistortionCorrectionPoint.set_move_to_right_in_array(points_rechts, 992 + 1011+990)
 
     stichting_images = [ ImageAndPasspoints(links,points_links),
                          ImageAndPasspoints(mitte_links, points_mitte_links),
-                         ImageAndPasspoints(mitte_rechts, points_mitte_rechts)]
+                         ImageAndPasspoints(mitte_rechts, points_mitte_rechts),
+                         ImageAndPasspoints(rechts, points_rechts)]
 
-    stitched_image, new_weight = Img.sticht_images_vignete(stichting_images,StitchMode.MODE_STRONGEST)
+
+    stitched_image, new_weight = Img.sticht_images_vignete(stichting_images,StitchMode.MODE_MULTIBAND_BLENDING)
 
 
 
@@ -65,6 +68,7 @@ def zwei_bilder_stiching():
 
 
     #imsave('../gGebaeude/new_weight.jpg', new_weight)
+
 
 
 def schachbrett_stiching_kein_ueberlapp():
