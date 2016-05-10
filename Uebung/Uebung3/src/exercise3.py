@@ -31,7 +31,7 @@ def zwei_bilder_stiching():
     DistortionCorrectionPoint.set_move_to_right_in_array(points_mitte_links, 992)
 
     new_image_links = DistortionCorrection.distortion_correction(points_links, links)
-    #new_images_mitte_links = DistortionCorrection.distortion_correction(points_mitte_links, mitte_links)
+    new_images_mitte_links = DistortionCorrection.distortion_correction(points_mitte_links, mitte_links)
 
     #stichting_images = [ ImageAndPasspoints(links,points_links),
     #                     ImageAndPasspoints(mitte_links, points_mitte_links)]

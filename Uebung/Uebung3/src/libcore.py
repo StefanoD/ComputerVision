@@ -446,7 +446,7 @@ class DistortionCorrection(object):
         return new_image
 
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 class DistortionCorrection_speed(object):
     @staticmethod
