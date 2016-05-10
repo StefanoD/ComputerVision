@@ -40,7 +40,7 @@ def zwei_bilder_stiching():
                      DistortionCorrectionPoint(3272.0, 1191.0, 1169, 0),  # rechts oben
                      DistortionCorrectionPoint(3417.0, 3019.0, 1169, 650)]  # rechts unten
 
-    DistortionCorrectionPoint.set_move_to_right_in_array(points_rechts, 992 + 1011+990)
+    DistortionCorrectionPoint.set_move_to_right_in_array(points_rechts, 992 + 1011 + 990)
 
     stichting_images = [ ImageAndPasspoints(links,points_links),
                          ImageAndPasspoints(mitte_links, points_mitte_links),
