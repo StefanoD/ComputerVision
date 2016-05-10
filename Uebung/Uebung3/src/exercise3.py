@@ -2,7 +2,7 @@ import numpy as np
 from scipy.misc import imsave
 
 from libcore import Img
-from libcore import DistortionCorrection, DistortionCorrectionPoint, ImageAndPasspoints
+from libcore import DistortionCorrection, DistortionCorrectionPoint, ImageAndPasspoints, StitchMode
 
 
 def main():
@@ -33,37 +33,39 @@ def zwei_bilder_stiching():
 
     DistortionCorrectionPoint.set_move_to_right_in_array(points_mitte_links, 992)
 
-    new_image_links = DistortionCorrection.distortion_correction(points_links, links)
-    new_images_mitte_links = DistortionCorrection.distortion_correction(points_mitte_links, mitte_links)
 
-    #stichting_images = [ ImageAndPasspoints(links,points_links),
-    #                     ImageAndPasspoints(mitte_links, points_mitte_links)]
+
 
 
 
 
     points_mitte_rechts = [DistortionCorrectionPoint(505.0, 395.0, 0.0, 0.0),  # links oben
                     DistortionCorrectionPoint(489.0, 3181.0, 0.0, 650),  # links unten
-                    DistortionCorrectionPoint(4058.0, 493.0, 1640, 0),  # rechts oben
-                    DistortionCorrectionPoint(4250.0, 3027.0, 1640, 650)]  # rechts unten
+                    DistortionCorrectionPoint(4058.0, 493.0, 990, 0),  # rechts oben
+                    DistortionCorrectionPoint(4250.0, 3027.0, 990, 650)]  # rechts unten
 
-    new_mitte_rechts = DistortionCorrection.distortion_correction(points_mitte_rechts, mitte_rechts)
-
+    DistortionCorrectionPoint.set_move_to_right_in_array(points_mitte_rechts, 992+1011)
 
     points_rechts = [DistortionCorrectionPoint(763.0, 771.0, 0.0, 0.0),  # links oben
                            DistortionCorrectionPoint(817.0, 3164.0, 0.0, 650),  # links unten
-                           DistortionCorrectionPoint(3272.0, 1191.0, 2069, 0),  # rechts oben
-                           DistortionCorrectionPoint(3417.0, 3019.0, 2069, 650)]  # rechts unten
-
-    new_rechts = DistortionCorrection.distortion_correction(points_rechts,rechts )
+                           DistortionCorrectionPoint(3272.0, 1191.0, 1169, 0),  # rechts oben
+                           DistortionCorrectionPoint(3417.0, 3019.0, 1169, 650)]  # rechts unten
 
 
 
-    imsave("../gGebaeude/1links_correct.jpg", new_image_links)
-    imsave("../gGebaeude/1mitte_links_correct.jpg", new_images_mitte_links)
+    stichting_images = [ ImageAndPasspoints(links,points_links),
+                         ImageAndPasspoints(mitte_links, points_mitte_links),
+                         ImageAndPasspoints(mitte_rechts, points_mitte_rechts)]
 
-    imsave("../gGebaeude/1mitte_rechts_correct.jpg", new_mitte_rechts)
-    imsave("../gGebaeude/1rechts_correct.jpg", new_rechts)
+    stitched_image, new_weight = Img.sticht_images_vignete(stichting_images,StitchMode.MODE_STRONGEST)
+
+
+
+    imsave('../gGebaeude/stitched_image.jpg',stitched_image)
+
+
+    #imsave('../gGebaeude/new_weight.jpg', new_weight)
+
 
 def schachbrett_stiching_kein_ueberlapp():
     oben = Img.load_image('../images_schachbrett/stitching/oben.jpg')
