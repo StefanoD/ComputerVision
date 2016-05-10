@@ -57,8 +57,8 @@ class Img:
         retificated_img_2 = DistortionCorrection.distortion_correction(images_and_passpoints[1].passpoints,
                                                            images_and_passpoints[1].image)
 
-        imsave("../test/weight_1_mask.jpg", weight_1_mask)
-        imsave("../test/weight_1_mask.jpg", weight_2_mask)
+        #imsave("../test/weight_1_mask.jpg", weight_1_mask)
+        #imsave("../test/weight_1_mask.jpg", weight_2_mask)
 
         stitched_image, new_weight = Img.stitch_two_pics(retificated_img_1,weight_1_mask,retificated_img_2,weight_2_mask,images_and_passpoints[1].passpoints,mode)
 
