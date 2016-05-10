@@ -15,6 +15,9 @@ def main():
 def zwei_bilder_stiching():
     links = Img.load_image('../gGebaeude/links.jpg')
     mitte_links = Img.load_image('../gGebaeude/mitteLinks.jpg')
+    mitte_rechts = Img.load_image('../gGebaeude/mitteRechts.jpg')
+    rechts = Img.load_image('../gGebaeude/rechts.jpg')
+
 
     points_links = [DistortionCorrectionPoint(1215.0, 919.0, 0.0, 0.0),  # links oben
                     DistortionCorrectionPoint(1001.0, 3066.0, 0.0, 650),  # links unten
@@ -37,18 +40,30 @@ def zwei_bilder_stiching():
     #                     ImageAndPasspoints(mitte_links, points_mitte_links)]
 
 
+
+
     points_mitte_rechts = [DistortionCorrectionPoint(505.0, 395.0, 0.0, 0.0),  # links oben
                     DistortionCorrectionPoint(489.0, 3181.0, 0.0, 650),  # links unten
-                    DistortionCorrectionPoint(4058.0, 493.0, 1440, 0),  # rechts oben
-                    DistortionCorrectionPoint(4250.0, 3027.0, 1440, 650)]  # rechts unten
+                    DistortionCorrectionPoint(4058.0, 493.0, 1640, 0),  # rechts oben
+                    DistortionCorrectionPoint(4250.0, 3027.0, 1640, 650)]  # rechts unten
 
-    new_mitte_rechts = DistortionCorrection.distortion_correction(points_links, links)
+    new_mitte_rechts = DistortionCorrection.distortion_correction(points_mitte_rechts, mitte_rechts)
 
-    #Img.sticht_images_vignete(stichting_images)
 
-    #imsave("../gGebaeude/links_correct.jpg", new_image_links)
-    imsave("../gGebaeude/mitte_rechts_correct.jpg", new_mitte_rechts)
+    points_rechts = [DistortionCorrectionPoint(763.0, 771.0, 0.0, 0.0),  # links oben
+                           DistortionCorrectionPoint(817.0, 3164.0, 0.0, 650),  # links unten
+                           DistortionCorrectionPoint(3272.0, 1191.0, 2069, 0),  # rechts oben
+                           DistortionCorrectionPoint(3417.0, 3019.0, 2069, 650)]  # rechts unten
 
+    new_rechts = DistortionCorrection.distortion_correction(points_rechts,rechts )
+
+
+
+    imsave("../gGebaeude/1links_correct.jpg", new_image_links)
+    imsave("../gGebaeude/1mitte_links_correct.jpg", new_images_mitte_links)
+
+    imsave("../gGebaeude/1mitte_rechts_correct.jpg", new_mitte_rechts)
+    imsave("../gGebaeude/1rechts_correct.jpg", new_rechts)
 
 def schachbrett_stiching_kein_ueberlapp():
     oben = Img.load_image('../images_schachbrett/stitching/oben.jpg')
