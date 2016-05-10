@@ -36,45 +36,25 @@ class Img:
 
     @staticmethod
     def sticht_images_vignete(images_and_passpoints, mode=StitchMode.MODE_MULTIBAND_BLENDING):
+        weight_left_img = Img.calculate_weight(images_and_passpoints[0].image)
+        weight_mask_left_img = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints, weight_left_img)
 
-        #width1, height1 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[0].passpoints)
-        #width2, height2 = DistortionCorrectionPoint.get_max_distance(images_and_passpoints[1].passpoints)
-
-
-
-
-        #imsave("../test/weight_1.jpg", weight_1)
-        #imsave("../test/weight_2.jpg", weight_2)
-
-        weight_1 = Img.calculate_weight(images_and_passpoints[0].image)
-        weight_1_mask = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints, weight_1)
-
-
-        #imsave("../test/weight_1_mask.jpg", weight_1_mask)
-
-        retificated_img_1 = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
+        left_retificated_image = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
                                                            images_and_passpoints[0].image)
 
-        #imsave("../test/weight_1_mask.jpg", weight_1_mask)
-
-        #stitched_image, new_weight = Img.stitch_two_pics(retificated_img_1,weight_1_mask,retificated_img_2,weight_2_mask,images_and_passpoints[1].passpoints,mode)
-
         if len(images_and_passpoints) > 1:
-            tmp_stitched_image = retificated_img_1
-            tmp_new_weight = weight_1_mask
-
             for i in range(1, len(images_and_passpoints)):
-                tmp_weight_mask = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
+                weight_mask_right_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
                                                                              Img.calculate_weight(images_and_passpoints[i].image))
-                tmp_retificated_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
+                right_retificated_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
                                                                                  images_and_passpoints[i].image)
 
-                tmp_stitched_image, tmp_new_weight = Img.stitch_two_pics(tmp_stitched_image, tmp_new_weight,
-                                                                         tmp_retificated_img, tmp_weight_mask,
+                left_retificated_image, weight_mask_left_img = Img.stitch_two_pics(left_retificated_image, weight_mask_left_img,
+                                                                         right_retificated_img, weight_mask_right_img,
                                                                          images_and_passpoints[i].passpoints, mode)
-            return tmp_stitched_image
+            return left_retificated_image
         else:
-            return retificated_img_1
+            return left_retificated_image
 
 
     @staticmethod
