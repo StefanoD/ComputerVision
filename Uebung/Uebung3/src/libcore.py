@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from skimage.data import imread
 from skimage import transform as tf
 from scipy.ndimage.filters import gaussian_filter
@@ -165,6 +167,37 @@ class Img:
         weight3d[:, :, 1] = weight
         weight3d[:, :, 2] = weight
 
+        #imsave('../gGebaeude/weight3d_old.jpg', weight3d)
+
+        return weight3d
+
+    @staticmethod
+    def calculate_weight_new(img):
+        dim_y, dim_x = (img.shape[0], img.shape[1])
+
+        center_x, center_y = dim_x / 2.0, dim_y / 2.0
+        radius = max([center_x, center_y])
+        weight_per_pixel = 1.0 / radius
+
+        grid = np.meshgrid(np.arange(dim_x), np.arange(dim_y))
+        coordinates = np.vstack(grid).reshape(2, -1).T
+
+        weight3d = np.empty((dim_y, dim_x, 3))
+
+        print "coordinates.shape: ", coordinates.shape
+        print "weight3d.shape: ", weight3d.shape
+
+        for x, y in coordinates:
+            distance = math.sqrt((x - center_x) ** 2 + (y - center_y) ** 2)
+
+            weight = (radius - distance) * weight_per_pixel
+            # Der Radius kann kleiner sein als die gemessene Distanz, weil der Radius min(dim_x, dim_y) ist.
+            # Das hat zur Folge, dass negative Gewichte rauskommen können, was ausgeglichen werden muss.
+            #weight = max(0, weight)
+
+            weight3d[y, x, :] = weight
+
+        imsave('../gGebaeude/weight3d_new.jpg', weight3d)
         return weight3d
 
     @staticmethod
