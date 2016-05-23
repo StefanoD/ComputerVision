@@ -533,6 +533,7 @@ class DistortionCorrectionPoint(object):
 class Signal(object):
     @staticmethod
     def make_sequence(dim_t, dim_y, dim_x, v):
+        frequency = 2
         rad_per_pixel = 2 * np.pi / dim_x
         translation = rad_per_pixel * v
 
@@ -542,7 +543,7 @@ class Signal(object):
         for t in range(dim_t):
             for x in range(dim_x):
                 pos_in_rad = rad_per_pixel * x
-                value = np.sin(pos_in_rad * 2 - (translation * t))
+                value = np.sin(pos_in_rad * frequency - (translation * t))
                 signal[x] = value
 
             image = np.ones((dim_y, dim_x))
@@ -556,15 +557,16 @@ class Signal(object):
     @staticmethod
     def make_sequence_2(dim_t, dim_y, dim_x, v):
         rad_per_pixel = 2 * np.pi / dim_x
+        frequency = 2
         translation = rad_per_pixel * v
 
         image_sequence = np.empty((dim_t, dim_y, dim_x))
         x_coord = np.linspace(0, dim_x - 1, dim_x)
 
         for t in range(dim_t):
-            freq_signal = (2 * rad_per_pixel) * x_coord
-            signal = freq_signal - (translation * t)
-            sinus_signal = np.sin(signal)
+            freq_signal = (frequency * rad_per_pixel) * x_coord
+            translated_freq_signal = freq_signal - (translation * t)
+            sinus_signal = np.sin(translated_freq_signal)
             image_sequence[t::] = sinus_signal
 
         return image_sequence

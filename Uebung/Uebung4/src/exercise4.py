@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from libcore import Signal
 import numpy as np
 
-class Dia(object):
 
+class Dia(object):
     def __init__(self, sequenz_image):
 
         self.figure, self.subplot = plt.subplots()
@@ -21,10 +21,10 @@ class Dia(object):
         self.max_sequenz_pics = sequenz_image.shape[0]
 
     def _redraw_image(self):
-        self.subplot.imshow(self.sequenz_iamges[self.current_frame,:,:])
+        self.subplot.imshow(self.sequenz_iamges[self.current_frame, :, :])
         plt.draw()
 
-    def show_seq(self, start_frame = 0):
+    def show_seq(self, start_frame=0):
         if start_frame != 0:
             self.current_frame = start_frame
         else:
@@ -42,18 +42,30 @@ class Dia(object):
         elif key_event.key == 'q':
             plt.close()
 
-def main():
 
+def main():
+    import time
     robot_corridor_mat = loadmat('../robot-corridor.mat')
     robot_corridor_sequenz = robot_corridor_mat['seq']
 
-    #roboter_corrdor = Dia(robot_corridor_sequenz)
+    # roboter_corrdor = Dia(robot_corridor_sequenz)
 
-    #roboter_corrdor.show_seq()
+    # roboter_corrdor.show_seq()
 
-    sinus_sequence = Signal.make_sequence_2(10, 10, 50, 25)
+    start = time.time()
+    sinus_sequence = Signal.make_sequence(50, 10, 50, 1)
+    end = time.time()
+
+    print "make_sequence: ", end - start
+
+    start = time.time()
+    sinus_sequence = Signal.make_sequence_2(50, 10, 50, 1)
+    end = time.time()
+
+    print "make_sequence_2: ", end - start
 
     Dia(sinus_sequence).show_seq()
+
     """
     signals = loadmat('../signals.mat')
 
@@ -75,7 +87,6 @@ def main():
 
 def test():
     print "test"
-
 
 
 if __name__ == "__main__": main()
