@@ -26,6 +26,7 @@ def zwei_bilder_stiching():
                           DistortionCorrectionPoint(4175.0, 461.0, 1011, 0.0),  # rechts oben
                           DistortionCorrectionPoint(4261.0, 3249.0, 1011, 650)]  # rechts unten
 
+    # Verschiebe Bild zum nächsten Passpunkt
     DistortionCorrectionPoint.set_move_to_right_in_array(points_mitte_links, 992)
 
     points_mitte_rechts = [DistortionCorrectionPoint(505.0, 395.0, 0.0, 0.0),  # links oben

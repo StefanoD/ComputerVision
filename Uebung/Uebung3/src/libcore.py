@@ -39,8 +39,11 @@ class Img:
     @staticmethod
     def sticht_images_vignete(images_and_passpoints, mode=StitchMode.MODE_MULTIBAND_BLENDING):
         weight_left_img = Img.calculate_weight(images_and_passpoints[0].image)
+
+        # Gewichtsmaske entzerren
         weight_mask_left_img = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints, weight_left_img)
 
+        # Bild genau gleich entzerren
         left_retificated_image = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
                                                            images_and_passpoints[0].image)
 
@@ -68,6 +71,7 @@ class Img:
         width2 = retificated_img_2.shape[1]
 
         new_height = max(height1, height2)
+        # Maximale Breite mit Verschiebung ist neue Breite
         new_width = DistortionCorrectionPoint.get_max_distance(passpoints_2)[0]
 
         print new_width, ", ", new_height
@@ -77,6 +81,7 @@ class Img:
         vec3_zero = np.array([0, 0, 0])
 
         if mode == StitchMode.MODE_MULTIBAND_BLENDING:
+            # Pro Dimension in Tief- und Hochpass aufteilen
             sig1_img1 = np.std(retificated_img_1[:, :, 0])
             sig2_img1 = np.std(retificated_img_1[:, :, 1])
             sig3_img1 = np.std(retificated_img_1[:, :, 2])

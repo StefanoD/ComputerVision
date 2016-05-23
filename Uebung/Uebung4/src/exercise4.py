@@ -3,14 +3,14 @@
 from scipy.io import loadmat
 import matplotlib.pyplot as plt
 
-from libcore import Img
+from libcore import Signal
 
 
 class Dia(object):
 
     def __init__(self, sequenz_image):
 
-        self.figure, self.subplot = plt.subplots( figsize=(10, 10))
+        self.figure, self.subplot = plt.subplots()
         plt.gray()
         # Key Listner
         self.figure.canvas.mpl_connect('key_press_event', self._key_listner)
@@ -47,11 +47,13 @@ def main():
     robot_corridor_mat = loadmat('../robot-corridor.mat')
     robot_corridor_sequenz = robot_corridor_mat['seq']
 
-    roboter_corrdor = Dia(robot_corridor_sequenz)
+    #roboter_corrdor = Dia(robot_corridor_sequenz)
 
-    roboter_corrdor.show_seq()
+    #roboter_corrdor.show_seq()
 
-    #
+    sinus_sequence = Signal.make_sequence(10, 10, 50, 25)
+
+    Dia(sinus_sequence).show_seq()
 
 
 

@@ -13,10 +13,12 @@ from scipy.misc import imsave
 
 DEBUG = True
 
+
 class StitchMode:
     MODE_STRONGEST = "MODE_STRONGEST"
     MODE_SUM = "MODE_SUM"
     MODE_MULTIBAND_BLENDING = "MODE_MULTIBAND_BLENDING"
+
 
 class Img:
     @staticmethod
@@ -39,28 +41,33 @@ class Img:
     @staticmethod
     def sticht_images_vignete(images_and_passpoints, mode=StitchMode.MODE_MULTIBAND_BLENDING):
         weight_left_img = Img.calculate_weight(images_and_passpoints[0].image)
-        weight_mask_left_img = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints, weight_left_img)
+        weight_mask_left_img = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
+                                                                          weight_left_img)
 
         left_retificated_image = DistortionCorrection.distortion_correction(images_and_passpoints[0].passpoints,
-                                                           images_and_passpoints[0].image)
+                                                                            images_and_passpoints[0].image)
 
         if len(images_and_passpoints) > 1:
             for i in range(1, len(images_and_passpoints)):
                 weight_mask_right_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
-                                                                             Img.calculate_weight(images_and_passpoints[i].image))
+                                                                                   Img.calculate_weight(
+                                                                                       images_and_passpoints[i].image))
                 right_retificated_img = DistortionCorrection.distortion_correction(images_and_passpoints[i].passpoints,
-                                                                                 images_and_passpoints[i].image)
+                                                                                   images_and_passpoints[i].image)
 
-                left_retificated_image, weight_mask_left_img = Img.stitch_two_pics(left_retificated_image, weight_mask_left_img,
-                                                                         right_retificated_img, weight_mask_right_img,
-                                                                         images_and_passpoints[i].passpoints, mode)
+                left_retificated_image, weight_mask_left_img = Img.stitch_two_pics(left_retificated_image,
+                                                                                   weight_mask_left_img,
+                                                                                   right_retificated_img,
+                                                                                   weight_mask_right_img,
+                                                                                   images_and_passpoints[i].passpoints,
+                                                                                   mode)
             return left_retificated_image
         else:
             return left_retificated_image
 
-
     @staticmethod
-    def stitch_two_pics(retificated_img_1, weight_1_mask, retificated_img_2, weight_2_mask, passpoints_2, mode=StitchMode.MODE_STRONGEST):
+    def stitch_two_pics(retificated_img_1, weight_1_mask, retificated_img_2, weight_2_mask, passpoints_2,
+                        mode=StitchMode.MODE_STRONGEST):
 
         height1 = retificated_img_1.shape[0]
         width1 = retificated_img_1.shape[1]
@@ -129,7 +136,8 @@ class Img:
                 elif mode == StitchMode.MODE_SUM:
                     total_weight = point_weight1 + point_weight2
                     if total_weight != 0:
-                        stitched_image[y, x:] = (point_weight1 * point_color1 + point_weight2 * point_color2) / total_weight
+                        stitched_image[y, x:] = (
+                                                point_weight1 * point_color1 + point_weight2 * point_color2) / total_weight
                     new_weight[y, x] = total_weight / 2.0
                 elif mode == StitchMode.MODE_MULTIBAND_BLENDING:
                     total_weight = point_weight1 + point_weight2
@@ -167,7 +175,7 @@ class Img:
         weight3d[:, :, 1] = weight
         weight3d[:, :, 2] = weight
 
-        #imsave('../gGebaeude/weight3d_old.jpg', weight3d)
+        # imsave('../gGebaeude/weight3d_old.jpg', weight3d)
 
         return weight3d
 
@@ -193,7 +201,7 @@ class Img:
             weight = (radius - distance) * weight_per_pixel
             # Der Radius kann kleiner sein als die gemessene Distanz, weil der Radius min(dim_x, dim_y) ist.
             # Das hat zur Folge, dass negative Gewichte rauskommen können, was ausgeglichen werden muss.
-            #weight = max(0, weight)
+            # weight = max(0, weight)
 
             weight3d[y, x, :] = weight
 
@@ -432,7 +440,7 @@ class DistortionCorrection(object):
         return new_image
 
 
-#import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 class DistortionCorrection_speed(object):
     @staticmethod
@@ -450,7 +458,6 @@ class DistortionCorrection_speed(object):
             src[i][1] = points[i].get_target_point_y()
 
         max_x, max_y = DistortionCorrectionPoint.get_max_distance(points)
-
 
         tform3 = tf.ProjectiveTransform()
         tform3.estimate(src, dst)
@@ -494,13 +501,10 @@ class DistortionCorrectionPoint(object):
 
         return tmp_x_max, tmp_y_max
 
-
     @staticmethod
     def set_move_to_right_in_array(points, right_pixel):
         for point in points:
             point.set_move_to_right(right_pixel)
-
-
 
     def __init__(self, pass_x, pass_y, target_x, target_y):
         self.pass_point_x = pass_x
@@ -514,7 +518,7 @@ class DistortionCorrectionPoint(object):
         self._move_to_right = right_pixel
 
     def get_target_point_x(self):
-        return self.target_point_x+self._move_to_right
+        return self.target_point_x + self._move_to_right
 
     def get_target_point_y(self):
         return self.target_point_y
@@ -527,18 +531,24 @@ class DistortionCorrectionPoint(object):
 
 
 class Signal(object):
-
     @staticmethod
     def make_sequence(dim_t, dim_y, dim_x, v):
-        wavelength = 0.5 * dim_x
-        frequency = v / wavelength
-
-        rad_per_pixel = np.pi / dim_x
+        rad_per_pixel = 2 * np.pi / dim_x
+        translation = rad_per_pixel * v
 
         signal = np.empty((dim_x))
+        image_sequence = np.empty((dim_t, dim_y, dim_x))
 
-        for x in range(dim_x):
-            pos_in_rad = rad_per_pixel * x
-            value = np.sin(pos_in_rad)
-            signal[x] = value
+        for t in range(dim_t):
+            for x in range(dim_x):
+                pos_in_rad = rad_per_pixel * x
+                value = np.sin(pos_in_rad * 2 - (translation * t))
+                signal[x] = value
 
+            image = np.ones((dim_y, dim_x))
+
+            image *= signal
+
+            image_sequence[t::] = image
+
+        return image_sequence
