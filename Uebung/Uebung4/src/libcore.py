@@ -137,7 +137,7 @@ class Img:
                     total_weight = point_weight1 + point_weight2
                     if total_weight != 0:
                         stitched_image[y, x:] = (
-                                                point_weight1 * point_color1 + point_weight2 * point_color2) / total_weight
+                                                    point_weight1 * point_color1 + point_weight2 * point_color2) / total_weight
                     new_weight[y, x] = total_weight / 2.0
                 elif mode == StitchMode.MODE_MULTIBAND_BLENDING:
                     total_weight = point_weight1 + point_weight2
@@ -552,3 +552,22 @@ class Signal(object):
             image_sequence[t::] = image
 
         return image_sequence
+
+    @staticmethod
+    def lowpass(signal, tau):
+        a = 1.0 / tau
+
+        new_signal = np.empty(signal.shape)
+        elements = len(signal)
+
+        new_signal[0] = signal[0]
+
+        for index in xrange(elements - 1):
+            new_signal[index + 1] = a * signal[index] + (1 - a) * new_signal[index]
+
+        return new_signal
+
+    @staticmethod
+    def detector(signal_left, signal_right, tau):
+        signal_left_lp = Signal.lowpass(signal_left, tau)
+
