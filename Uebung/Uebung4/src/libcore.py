@@ -536,7 +536,7 @@ class Signal(object):
         rad_per_pixel = 2 * np.pi / dim_x
         translation = rad_per_pixel * v
 
-        signal = np.empty((dim_x))
+        signal = np.empty(dim_x)
         image_sequence = np.empty((dim_t, dim_y, dim_x))
 
         for t in range(dim_t):
