@@ -6,40 +6,38 @@ import matplotlib.pyplot as plt
 from libcore import Img
 
 
-class Gui(object):
+class Dia(object):
 
-    def __init__(self):
+    def __init__(self, sequenz_image):
 
         self.figure, self.subplot = plt.subplots( figsize=(10, 10))
         plt.gray()
         # Key Listner
-        self.figure.canvas.mpl_connect('key_press_event', self.key_listner)
+        self.figure.canvas.mpl_connect('key_press_event', self._key_listner)
 
         self.current_frame = 0
 
-        self.max_sequenz_pics = 0
+        self.sequenz_iamges = sequenz_image
+        self.max_sequenz_pics = sequenz_image.shape[0]
 
-    def show(self):
-        plt.show()
+    def _redraw_image(self):
+        self.subplot.imshow(self.sequenz_iamges[self.current_frame,:,:])
+        plt.draw()
 
-    def show_seq(self, sequenz , start_frame = 0):
-
-
-
+    def show_seq(self, start_frame = 0):
         if start_frame != 0:
             self.current_frame = start_frame
         else:
             self.current_frame = 0
 
-        self.subplot.imshow(sequenz[self.current_frame,:,:])
-
+        self._redraw_image()
         plt.show()
 
-    def key_listner(self, key_event):
+    def _key_listner(self, key_event):
         if key_event.key == 'w':
-            print "Pressed Weiter"
             self.current_frame += 1
-            #if self.current_frame <
+            if self.current_frame < self.max_sequenz_pics:
+                self._redraw_image()
 
         elif key_event.key == 'q':
             plt.close()
@@ -49,9 +47,9 @@ def main():
     robot_corridor_mat = loadmat('../robot-corridor.mat')
     robot_corridor_sequenz = robot_corridor_mat['seq']
 
-    display_gui = Gui()
+    roboter_corrdor = Dia(robot_corridor_sequenz)
 
-    display_gui.show_seq(robot_corridor_sequenz)
+    roboter_corrdor.show_seq()
 
     #
 

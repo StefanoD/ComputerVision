@@ -11,11 +11,11 @@ class correlationDetector(object):
 
         tau = 1.3
 
-        # mat = scipy.io.loadmat('robot-corridor.mat')
-        # images = mat['seq']
-        # self.show_seq(images)
-        # sequence = self.make_seq(100,50,5,5)
-        # self.show_seq(sequence)
+        mat = scipy.io.loadmat('robot-corridor.mat')
+        images = mat['seq']
+        self.show_seq(images)
+        sequence = self.make_seq(100,50,5,5)
+        self.show_seq(sequence)
         mat = scipy.io.loadmat('signals.mat')
         step = mat['step']
         lpsignal = self.lowpass(step[0], tau, True)
