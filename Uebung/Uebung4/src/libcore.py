@@ -534,7 +534,7 @@ class Signal(object):
     @staticmethod
     def make_sequence(dim_t, dim_y, dim_x, v):
         frequency = 2
-        rad_per_pixel = 2 * np.pi / dim_x
+        rad_per_pixel = frequency * (2 * np.pi / dim_x)
 
         signal = np.empty(dim_x)
         image_sequence = np.empty((dim_t, dim_y, dim_x))
@@ -543,7 +543,7 @@ class Signal(object):
         for t in range(dim_t):
             for x in range(dim_x):
                 pos_in_rad = rad_per_pixel * (x - (v * t))
-                value = np.sin(pos_in_rad * frequency)
+                value = np.sin(pos_in_rad)
                 signal[x] = value
 
             image = signal * one_matrix
@@ -554,15 +554,15 @@ class Signal(object):
 
     @staticmethod
     def make_sequence_2(dim_t, dim_y, dim_x, v):
-        rad_per_pixel = 2 * np.pi / dim_x
         frequency = 2
+        rad_per_pixel = frequency * (2 * np.pi / dim_x)
 
         image_sequence = np.empty((dim_t, dim_y, dim_x))
         x_coord = np.linspace(0, dim_x - 1, dim_x)
 
         for t in range(dim_t):
             translation_signal = x_coord - (v * t)
-            translated_freq_signal = (frequency * rad_per_pixel) * translation_signal
+            translated_freq_signal = rad_per_pixel * translation_signal
             sinus_signal = np.sin(translated_freq_signal)
             image_sequence[t::] = sinus_signal
 
