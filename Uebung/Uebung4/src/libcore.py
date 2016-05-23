@@ -524,3 +524,21 @@ class DistortionCorrectionPoint(object):
 
     def get_pass_point_y(self):
         return self.pass_point_y
+
+
+class Signal(object):
+
+    @staticmethod
+    def make_sequence(dim_t, dim_y, dim_x, v):
+        wavelength = 0.5 * dim_x
+        frequency = v / wavelength
+
+        rad_per_pixel = np.pi / dim_x
+
+        signal = np.empty((dim_x))
+
+        for x in range(dim_x):
+            pos_in_rad = rad_per_pixel * x
+            value = np.sin(pos_in_rad)
+            signal[x] = value
+
