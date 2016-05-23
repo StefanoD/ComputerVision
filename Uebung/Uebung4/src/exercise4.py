@@ -51,10 +51,10 @@ def main():
 
     #roboter_corrdor.show_seq()
 
-    #sinus_sequence = Signal.make_sequence(10, 10, 50, 25)
+    sinus_sequence = Signal.make_sequence_2(10, 10, 50, 25)
 
-    #Dia(sinus_sequence).show_seq()
-
+    Dia(sinus_sequence).show_seq()
+    """
     signals = loadmat('../signals.mat')
 
     step = signals['step'][0]
@@ -70,7 +70,7 @@ def main():
     lps = Signal.lowpass(rectangle, tau)
 
     plt.plot(np.arange(len(lps)), lps)
-    plt.show()
+    plt.show()"""
 
 
 def test():

@@ -554,6 +554,23 @@ class Signal(object):
         return image_sequence
 
     @staticmethod
+    def make_sequence_2(dim_t, dim_y, dim_x, v):
+        rad_per_pixel = 2 * np.pi / dim_x
+        translation = rad_per_pixel * v
+
+        image_sequence = np.empty((dim_t, dim_y, dim_x))
+        x_coord = np.linspace(0, dim_x - 1, dim_x)
+
+        for t in range(dim_t):
+            freq_signal = (2 * rad_per_pixel) * x_coord
+            signal = freq_signal - (translation * t)
+            sinus_signal = np.sin(signal)
+            image_sequence[t::] = sinus_signal
+
+        return image_sequence
+
+
+    @staticmethod
     def lowpass(signal, tau):
         a = 1.0 / tau
 
