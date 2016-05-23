@@ -539,6 +539,7 @@ class Signal(object):
 
         signal = np.empty(dim_x)
         image_sequence = np.empty((dim_t, dim_y, dim_x))
+        one_matrix = np.ones((dim_y, dim_x))
 
         for t in range(dim_t):
             for x in range(dim_x):
@@ -546,9 +547,7 @@ class Signal(object):
                 value = np.sin(pos_in_rad * frequency - (translation * t))
                 signal[x] = value
 
-            image = np.ones((dim_y, dim_x))
-
-            image *= signal
+            image = signal * one_matrix
 
             image_sequence[t::] = image
 
