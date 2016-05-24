@@ -584,6 +584,12 @@ class Signal(object):
         return new_signal
 
     @staticmethod
-    def detector(signal_left, signal_right, tau):
-        signal_left_lp = Signal.lowpass(signal_left, tau)
+    def detector(signal, tau):
+        signal_left_lp = Signal.lowpass(signal, tau)
+
+        multiplication = signal_left_lp * signal
+
+        correlation = np.sum(multiplication)
+
+        return correlation
 

@@ -42,15 +42,8 @@ class Dia(object):
         elif key_event.key == 'q':
             plt.close()
 
-
-def main():
+def aufgabe_1b():
     import time
-    robot_corridor_mat = loadmat('../robot-corridor.mat')
-    robot_corridor_sequenz = robot_corridor_mat['seq']
-
-    # roboter_corrdor = Dia(robot_corridor_sequenz)
-
-    # roboter_corrdor.show_seq()
 
     start = time.time()
     sinus_sequence = Signal.make_sequence(50, 10, 50, 1)
@@ -64,8 +57,16 @@ def main():
 
     print "make_sequence_2: ", end - start
 
-    #Dia(sinus_sequence).show_seq()
+    Dia(sinus_sequence).show_seq()
 
+def aufgabe_1a():
+    robot_corridor_mat = loadmat('../robot-corridor.mat')
+    robot_corridor_sequenz = robot_corridor_mat['seq']
+
+    roboter_corrdor = Dia(robot_corridor_sequenz)
+    roboter_corrdor.show_seq()
+
+def aufgabe_2():
     signals = loadmat('../signals.mat')
 
     step = signals['step'][0]
@@ -85,6 +86,19 @@ def main():
     plt.plot(np.arange(len(rectangle)), rectangle)
     plt.plot(np.arange(len(lps)), lps)
     plt.show()
+
+def aufgabe_3a()
+    signals = loadmat('../signals.mat')
+    step = signals['step'][0]
+    rectangle = signals['rectangle'][0]
+
+    tau = 2.0
+
+    correlation = Signal.detector(rectangle, tau)
+
+def main():
+
+
 
 
 def test():
