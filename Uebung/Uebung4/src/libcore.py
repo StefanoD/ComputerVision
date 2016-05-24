@@ -593,3 +593,13 @@ class Signal(object):
 
         return correlation
 
+    @staticmethod
+    def bug(sinus_sequence):
+        eye_left_pos_x, eye_left_pos_y = (10, 1)
+        eye_right_pos_x, eye_right_pos_y = (20, 1)
+
+        signal_left = [sinus_signal[eye_left_pos_y, eye_left_pos_x] for sinus_signal in sinus_sequence]
+        signal_right = [sinus_signal[eye_right_pos_y, eye_right_pos_x] for sinus_signal in sinus_sequence]
+
+        return signal_left, signal_right
+
