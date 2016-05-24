@@ -96,18 +96,42 @@ def aufgabe_3a():
 
     correlation = Signal.detector(rectangle, rectangle, tau)
 
-def aufgabe_3b():
-    sinus_sequence = Signal.make_sequence(dim_t=100, dim_y=5, dim_x=50, v=25)
+def aufgabe_3b(v_parameter):
+    sinus_sequence = Signal.make_sequence(dim_t=100, dim_y=5, dim_x=50, v=v_parameter)
     signal_left, signal_right = Signal.bug(sinus_sequence)
     correlation = Signal.detector(signal_left, signal_right, tau=1.1)
 
     # Korrelation ist am hoechsten, bei v*2*PI.
     # 2*PI ist in unserem Beispiel 25 Pixel. Also bei v * 25.
 
-    print "correlation: ", correlation
+    print "correlation links-rechts: ", correlation
+
+    return correlation
+
+
+def aufgabe_3c(v_parameter):
+    sinus_sequence = Signal.make_sequence(dim_t=100, dim_y=5, dim_x=50, v=v_parameter)
+    signal_left, signal_right = Signal.bug(sinus_sequence)
+    correlation = Signal.detector(signal_right, signal_left, tau=1.1)
+
+    # Korrelation ist am hoechsten, bei v*2*PI.
+    # 2*PI ist in unserem Beispiel 25 Pixel. Also bei v * 25.
+
+    print "correlation rechts-links: ", correlation
+
+    return correlation
+
+
+def aufgabe_3d():
+    corr_left = aufgabe_3b(5)
+    corr_right = aufgabe_3c(5)
+
+    corr_total = corr_right - corr_left
+
+    print "corr_total: ", corr_total
 
 def main():
-    aufgabe_3b()
+    aufgabe_3d()
 
 
 

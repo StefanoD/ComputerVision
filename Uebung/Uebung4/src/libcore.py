@@ -602,4 +602,3 @@ class Signal(object):
         signal_right = [sinus_signal[eye_right_pos_y, eye_right_pos_x] for sinus_signal in sinus_sequence]
 
         return signal_left, signal_right
-
