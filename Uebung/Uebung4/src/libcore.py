@@ -571,7 +571,7 @@ class Signal(object):
 
     @staticmethod
     def lowpass(signal, tau):
-        a = 1.0 / tau
+        alpha = 1.0 / tau
 
         new_signal = np.empty(signal.shape)
         elements = len(signal)
@@ -579,7 +579,7 @@ class Signal(object):
         new_signal[0] = signal[0]
 
         for index in xrange(elements - 1):
-            new_signal[index + 1] = a * signal[index] + (1 - a) * new_signal[index]
+            new_signal[index + 1] = alpha * signal[index] + (1 - alpha) * new_signal[index]
 
         return new_signal
 
