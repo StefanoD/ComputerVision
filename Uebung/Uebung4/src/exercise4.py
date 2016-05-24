@@ -75,11 +75,14 @@ def main():
 
     lps = Signal.lowpass(step, tau)
 
+    plt.plot(np.arange(len(step)), step)
+
     plt.plot(np.arange(len(lps)), lps)
     plt.show()
 
     lps = Signal.lowpass(rectangle, tau)
 
+    plt.plot(np.arange(len(rectangle)), rectangle)
     plt.plot(np.arange(len(lps)), lps)
     plt.show()
 
