@@ -94,10 +94,26 @@ def aufgabe_3a():
 
     tau = 2.0
 
-    correlation = Signal.detector(rectangle, tau)
+    correlation = Signal.detector(rectangle, rectangle, tau)
+
+def aufgabe_3b():
+    sinus_sequence = Signal.make_sequence(dim_t=100, dim_y=5, dim_x=50, v=35)
+
+    eye_left_pos_x, eye_left_pos_y = (10, 1)
+    eye_right_pos_x, eye_right_pos_y = (20, 1)
+
+    signal_left = [sinus_signal[eye_left_pos_y, eye_left_pos_x] for sinus_signal in sinus_sequence]
+    signal_right = [sinus_signal[eye_right_pos_y, eye_right_pos_x] for sinus_signal in sinus_sequence]
+
+    correlation = Signal.detector(signal_left, signal_right, tau=1.1)
+
+    # Korrelation ist am hoechsten, bei v*2*PI.
+    # 2*PI ist in unserem Beispiel 25 Pixel. Also bei v * 25.
+
+    print "correlation: ", correlation
 
 def main():
-
+    aufgabe_3b()
 
 
 

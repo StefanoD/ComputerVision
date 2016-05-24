@@ -573,21 +573,21 @@ class Signal(object):
     def lowpass(signal, tau):
         alpha = 1.0 / tau
 
-        new_signal = np.empty(signal.shape)
-        elements = len(signal)
+        number_of_elements = len(signal)
+        new_signal = np.empty(number_of_elements)
 
         new_signal[0] = signal[0]
 
-        for index in xrange(elements - 1):
+        for index in xrange(number_of_elements - 1):
             new_signal[index + 1] = alpha * signal[index] + (1 - alpha) * new_signal[index]
 
         return new_signal
 
     @staticmethod
-    def detector(signal, tau):
-        signal_left_lp = Signal.lowpass(signal, tau)
+    def detector(signal_left, signal_right, tau):
+        signal_left_lp = Signal.lowpass(signal_left, tau)
 
-        multiplication = signal_left_lp * signal
+        multiplication = signal_left_lp * signal_right
 
         correlation = np.sum(multiplication)
 
