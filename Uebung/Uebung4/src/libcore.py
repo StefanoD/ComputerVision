@@ -587,9 +587,9 @@ class Signal(object):
     def detector(signal_left, signal_right, tau):
         signal_left_lp = Signal.lowpass(signal_left, tau)
 
-        multiplication = signal_left_lp * signal_right
+        product = signal_left_lp * signal_right
 
-        correlation = np.sum(multiplication)
+        correlation = np.sum(product)
 
         return correlation
 
