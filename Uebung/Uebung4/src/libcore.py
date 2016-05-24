@@ -533,8 +533,8 @@ class DistortionCorrectionPoint(object):
 class Signal(object):
     @staticmethod
     def make_sequence(dim_t, dim_y, dim_x, v):
-        number_of_periods = 2
-        rad_per_pixel = number_of_periods * (2 * np.pi / dim_x)
+        frequency = 2
+        rad_per_pixel = frequency * (2 * np.pi / dim_x)
 
         signal = np.empty(dim_x)
         image_sequence = np.empty((dim_t, dim_y, dim_x))
@@ -554,8 +554,8 @@ class Signal(object):
 
     @staticmethod
     def make_sequence_2(dim_t, dim_y, dim_x, v):
-        number_of_periods = 2
-        rad_per_pixel = number_of_periods * (2 * np.pi / dim_x)
+        frequency = 2
+        rad_per_pixel = frequency * (2 * np.pi / dim_x)
 
         image_sequence = np.empty((dim_t, dim_y, dim_x))
         x_coord = np.linspace(0, dim_x - 1, dim_x)
