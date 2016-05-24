@@ -87,7 +87,7 @@ def aufgabe_2():
     plt.plot(np.arange(len(lps)), lps)
     plt.show()
 
-def aufgabe_3a()
+def aufgabe_3a():
     signals = loadmat('../signals.mat')
     step = signals['step'][0]
     rectangle = signals['rectangle'][0]
