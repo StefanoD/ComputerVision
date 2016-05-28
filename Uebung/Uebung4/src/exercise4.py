@@ -123,20 +123,17 @@ def aufgabe_3c(v_parameter):
 
 
 def aufgabe_3d():
-    corr_left = aufgabe_3b(5)
-    corr_right = aufgabe_3c(5)
+    v = 5
+    corr_left = aufgabe_3b(v)
+    corr_right = aufgabe_3c(v)
 
     corr_total = corr_right - corr_left
 
     print "corr_total: ", corr_total
 
+
 def main():
     aufgabe_3d()
-
-
-
-def test():
-    print "test"
 
 
 if __name__ == "__main__": main()
