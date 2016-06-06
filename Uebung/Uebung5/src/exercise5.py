@@ -17,7 +17,6 @@ def optical_flow(img1, img2, theta):
 
     Dt = img2 - img1
 
-
     #toimage(img1).show()
     #toimage(img2).show()
     #toimage(Dt).show()
@@ -71,7 +70,7 @@ def optical_flow(img1, img2, theta):
             else:
                 print "moeh"
 
-    plt.quiver(u_value, v_value)
+    plt.quiver(range(img1.shape[1]), range(img1.shape[0]), u_value, v_value)
     plt.show()
 
 
@@ -87,15 +86,15 @@ def main():
 
     optical_flow(img1_1, img1_2, 0.01)
 
-    img2_1, img2_2 = get_images('../flowtest2.mat')
-    Dia(np.array([img2_1, img2_2])).show_seq()
-
-    optical_flow(img2_1, img2_2, 0.01)
-
-    img3_1, img3_2 = get_images('../flowtest3.mat')
-    Dia(np.array([img3_1, img3_2])).show_seq()
-
-    optical_flow(img3_1, img3_2, 0.01)
+    #img2_1, img2_2 = get_images('../flowtest2.mat')
+    #Dia(np.array([img2_1, img2_2])).show_seq()
+#
+    #optical_flow(img2_1, img2_2, 0.01)
+#
+    #img3_1, img3_2 = get_images('../flowtest3.mat')
+    #Dia(np.array([img3_1, img3_2])).show_seq()
+#
+    #optical_flow(img3_1, img3_2, 0.01)
 
 
 
