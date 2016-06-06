@@ -66,6 +66,8 @@ def aufgabe_3a():
 
     correlation = Signal.detector(rectangle, rectangle, tau)
 
+    return correlation
+
 def aufgabe_3b(v_parameter):
     sinus_sequence = Signal.make_sequence(dim_t=100, dim_y=5, dim_x=50, v=v_parameter)
     signal_left, signal_right = Signal.bug(sinus_sequence)
@@ -93,17 +95,49 @@ def aufgabe_3c(v_parameter):
 
 
 def aufgabe_3d():
-    v = 5
-    corr_left = aufgabe_3b(v)
-    corr_right = aufgabe_3c(v)
+    v_all = np.empty(50)
+    i = 0
+    for v in range(-25, 25):
+        corr_left = aufgabe_3b(v)
+        corr_right = aufgabe_3c(v)
 
-    corr_total = corr_right - corr_left
+        corr_total = corr_right - corr_left
+        v_all[i] = corr_total
+        i += 1
 
-    print "corr_total: ", corr_total
+        print "corr_total: ", corr_total
 
+    plt.plot(np.arange(len(v_all)), v_all)
+    plt.show()
+
+def aufgabe_3b_plot():
+    v_all = np.empty(50)
+    i = 0
+    for v in range(-25, 25):
+        corr_left = aufgabe_3b(v)
+
+        v_all[i] = corr_left
+        i += 1
+
+    plt.plot(np.arange(len(v_all)), v_all)
+    plt.show()
+
+def aufgabe_3c_plot():
+    v_all = np.empty(50)
+    i = 0
+    for v in range(-25, 25):
+        corr = aufgabe_3c(v)
+
+        v_all[i] = corr
+        i += 1
+
+    plt.plot(np.arange(len(v_all)), v_all)
+    plt.show()
 
 def main():
-    aufgabe_1b()
+    aufgabe_3b_plot()
+    aufgabe_3c_plot()
+    aufgabe_3d()
 
 
 if __name__ == "__main__": main()
