@@ -4,6 +4,7 @@ from scipy.io import loadmat
 import matplotlib.pyplot as plt
 
 from libcore import Signal
+from libcore import Dia
 import numpy as np
 
 
@@ -20,6 +21,10 @@ def aufgabe_1b():
     sinus_sequence = Signal.make_sequence_2(50, 10, 50, 1)
     end = time.time()
 
+    print "mean: ", np.mean(sinus_sequence)
+    normed = sinus_sequence + abs(np.min(sinus_sequence))
+    contrast = (np.max(normed) - np.min(normed)) / (np.max(normed) + np.min(normed))
+    print "contrast: ", contrast
     print "make_sequence_2: ", end - start
 
     Dia(sinus_sequence).show_seq()
@@ -98,7 +103,7 @@ def aufgabe_3d():
 
 
 def main():
-    aufgabe_3d()
+    aufgabe_1b()
 
 
 if __name__ == "__main__": main()
