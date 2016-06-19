@@ -71,24 +71,18 @@ def optical_flow(img1, img2, theta):
                 # Normalenfluss bestimmen
             elif lambda_2 < theta < lambda_1 or lambda_1 < theta < lambda_2:
                 pixels = [(x-1, y), (x, y-1), (x+1, y), (x, y+1), (x-1, y-1), (x+1, y+1), (x-1, y+1), (x+1, y-1), (x, y)]
-                m = np.zeros((1,9))
+                m = np.zeros((1, 9))
                 b = np.zeros(9)
                 for index in range(len(pixels)):
-                    m[0][index] = g[pixels[index][1],pixels[index][0]] #[pixelsic2_dx[pixels[1],pixels[0], pixelsic2_dy[pixels[1],pixels[0]]])#)
-                    b[index] = Dt[pixels[index][1],pixels[index][0]]
+                    m[0][index] = g[pixels[index][1], pixels[index][0]]
+                    b[index] = Dt[pixels[index][1], pixels[index][0]]
 
-                u_orth = np.dot(np.linalg.pinv(np.dot(m, m.T)), (np.dot(-m, b)))
-
+                u_orth = np.dot(np.dot(-m, b), np.linalg.pinv(np.dot(m, m.T)))
 
                 u_value[y,x] = u_orth * Dx[y,x] / g[y,x]
                 v_value[y,x] = u_orth * Dy[y,x] / g[y,x]
 
-
-                pass
-            else:
-                pass
-
-    X,Y = np.meshgrid(np.arange(0,img2.shape[0],1),np.arange(0,img2.shape[1],1))
+    X, Y = np.meshgrid(np.arange(0,img2.shape[0],1),np.arange(0,img2.shape[1],1))
 
     plt.quiver(X, Y, u_value, -v_value, units='xy', scale=1.0)
     plt.show()
@@ -102,17 +96,17 @@ def get_images(mat_lab_img):
 
 def main():
     img1_1, img1_2 = get_images('../flowtest1.mat')
-    #Dia(np.array([img1_1, img1_2])).show_seq()
+    Dia(np.array([img1_1, img1_2])).show_seq()
 
     optical_flow(img1_1, img1_2, 0.01)
 
     img2_1, img2_2 = get_images('../flowtest2.mat')
-    #Dia(np.array([img2_1, img2_2])).show_seq()
+    Dia(np.array([img2_1, img2_2])).show_seq()
 
     optical_flow(img2_1, img2_2, 0.01)
 
     img3_1, img3_2 = get_images('../flowtest3.mat')
-    #Dia(np.array([img3_1, img3_2])).show_seq()
+    Dia(np.array([img3_1, img3_2])).show_seq()
 
     optical_flow(img3_1, img3_2, 0.01)
 
