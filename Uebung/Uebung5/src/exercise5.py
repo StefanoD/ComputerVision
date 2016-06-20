@@ -80,13 +80,20 @@ def optical_flow(img1, img2, theta):
                 scalar_product = np.dot(m, m.T)
 
                 if scalar_product == 0:
-                    # Ganz große Zahl!
+                    # Ganz grosse Zahl!
                     u_orth = 10000000
                 else:
                     u_orth = np.dot(-m, b) / scalar_product
 
-                u_value[y,x] = u_orth * Dx[y,x] / g[y,x]
-                v_value[y,x] = u_orth * Dy[y,x] / g[y,x]
+                if g[y, x] == 0:
+                    # Ganz grosse Zahl!
+                    u_value[y, x] = 0
+                    v_value[y, x] = 0
+                else:
+                    # Dx und Dy ergeben den Gradient und g[y,x] ist die Laenge des Gradients.
+                    # u_orth ist einfach nur ein Skalar, der die Geschwindigkeit an der Orthogonalen angibt.
+                    u_value[y, x] = u_orth * Dx[y, x] / g[y, x]
+                    v_value[y, x] = u_orth * Dy[y, x] / g[y, x]
 
     X, Y = np.meshgrid(np.arange(0,img2.shape[0],1),np.arange(0,img2.shape[1],1))
 
