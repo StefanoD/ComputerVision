@@ -77,7 +77,13 @@ def optical_flow(img1, img2, theta):
                     m[0][index] = g[pixels[index][1], pixels[index][0]]
                     b[index] = Dt[pixels[index][1], pixels[index][0]]
 
-                u_orth = np.dot(np.dot(-m, b), np.linalg.pinv(np.dot(m, m.T)))
+                scalar_product = np.dot(m, m.T)
+
+                if scalar_product == 0:
+                    # Ganz große Zahl!
+                    u_orth = 10000000
+                else:
+                    u_orth = np.dot(-m, b) / scalar_product
 
                 u_value[y,x] = u_orth * Dx[y,x] / g[y,x]
                 v_value[y,x] = u_orth * Dy[y,x] / g[y,x]
