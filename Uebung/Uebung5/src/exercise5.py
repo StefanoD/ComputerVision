@@ -108,7 +108,7 @@ def main():
     img3_1, img3_2 = get_images('../flowtest3.mat')
     Dia(np.array([img3_1, img3_2])).show_seq()
 
-    optical_flow(img3_1, img3_2, 0.01)
+    optical_flow(img3_1, img3_2, 0.03)
 
 
 
