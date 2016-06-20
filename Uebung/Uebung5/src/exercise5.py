@@ -36,11 +36,12 @@ def optical_flow(img1, img2, theta):
     GDxy = gaussian_filter(Dxy, sigma)
     GDxt = gaussian_filter(Dxt, sigma)
     GDyt = gaussian_filter(Dyt, sigma)
+    GDt = gaussian_filter(Dt, sigma)
 
     u_value = np.zeros(img1.shape)
     v_value = np.zeros(img1.shape)
 
-    g = np.sqrt(Dx2 + Dy2)
+    Gg = np.sqrt(GDx2 + GDy2)
 
     for x in xrange(0, img1.shape[1]-1):
         for y in xrange(0, img1.shape[0]-1):
@@ -55,27 +56,21 @@ def optical_flow(img1, img2, theta):
             lambda_1 = eigenvalues_a[0]
             lambda_2 = eigenvalues_a[1]
 
-            #if lambda_1 > theta and lambda_2 > theta:
             if lambda_1 > lambda_2 > theta:
                 # Invertierung
                 inverse = np.linalg.inv(A)
-                #(u_x, u_y) = -inverse*b
 
-                u= np.dot(-inverse,b)
+                u= np.dot(-inverse, b)
 
-                u_value[y,x] = u[0]
-                v_value[y,x] = u[1]
-
-
-            #elif lambda_1 > theta > lambda_2:
-                # Normalenfluss bestimmen
+                u_value[y, x] = u[0]
+                v_value[y, x] = u[1]
             elif lambda_2 < theta < lambda_1 or lambda_1 < theta < lambda_2:
                 pixels = [(x-1, y), (x, y-1), (x+1, y), (x, y+1), (x-1, y-1), (x+1, y+1), (x-1, y+1), (x+1, y-1), (x, y)]
                 m = np.zeros((1, 9))
                 b = np.zeros(9)
                 for index in range(len(pixels)):
-                    m[0][index] = g[pixels[index][1], pixels[index][0]]
-                    b[index] = Dt[pixels[index][1], pixels[index][0]]
+                    m[0][index] = Gg[pixels[index][1], pixels[index][0]]
+                    b[index] = GDt[pixels[index][1], pixels[index][0]]
 
                 scalar_product = np.dot(m, m.T)
 
@@ -85,17 +80,16 @@ def optical_flow(img1, img2, theta):
                 else:
                     u_orth = np.dot(-m, b) / scalar_product
 
-                if g[y, x] == 0:
-                    # Ganz grosse Zahl!
+                if Gg[y, x] == 0:
                     u_value[y, x] = 0
                     v_value[y, x] = 0
                 else:
-                    # Dx und Dy ergeben den Gradient und g[y,x] ist die Laenge des Gradients.
+                    # Dx und Dy ergeben den Gradient und Gg[y,x] ist die Laenge des Gradients.
                     # u_orth ist einfach nur ein Skalar, der die Geschwindigkeit an der Orthogonalen angibt.
-                    u_value[y, x] = u_orth * Dx[y, x] / g[y, x]
-                    v_value[y, x] = u_orth * Dy[y, x] / g[y, x]
+                    u_value[y, x] = u_orth * Dx[y, x] / Gg[y, x]
+                    v_value[y, x] = u_orth * Dy[y, x] / Gg[y, x]
 
-    X, Y = np.meshgrid(np.arange(0,img2.shape[0],1),np.arange(0,img2.shape[1],1))
+    X, Y = np.meshgrid(np.arange(0, img2.shape[0], 1), np.arange(0, img2.shape[1], 1))
 
     plt.quiver(X, Y, u_value, -v_value, units='xy', scale=1.0)
     plt.show()
